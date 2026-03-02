@@ -1,0 +1,31 @@
+id: test-workspace
+name: Test Workspace Configuration
+version: 1.0.0
+description: Minimal test workspace configuration for Horus integration testing
+type: workspace-config
+author: Horus Integration Tests
+license: MIT
+tags:
+  - test-fixture
+  - integration
+  - horus
+plugins: []
+skills:
+  - test-integration-skill
+mcp_servers:
+  anvil:
+    description: Anvil note management and MCP server
+    required: true
+  vault:
+    description: Vault semantic search service
+    required: true
+settings:
+  retention_days: 30
+  naming_convention: test-{id}-{timestamp}
+git_workflow:
+  branch_pattern: test/{id}-{slug}
+  base_branch: main
+  stash_before_checkout: true
+  commit_format: conventional
+  pr_template: false
+  signed_commits: false

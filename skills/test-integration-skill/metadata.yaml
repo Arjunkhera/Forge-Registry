@@ -1,0 +1,15 @@
+id: test-integration-skill
+name: Test Integration Skill
+version: 1.0.0
+description: Verifies that an agent can reach all three Horus products by calling Anvil, Vault, and Forge MCP endpoints
+type: skill
+author: Horus Integration Tests
+license: MIT
+tags:
+  - test-fixture
+  - integration
+  - horus
+dependencies: {}
+files:
+  - SKILL.md
+  - skill.yaml
