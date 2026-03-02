@@ -1,0 +1,15 @@
+id: sdlc-test-suite
+name: Test Suite
+version: 1.0.0
+description: "Comprehensive testing pipeline: work-item testing, project-wide
+  regression, refactor verification, and product-level testing."
+type: agent
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - testing
+  - regression
+dependencies: {}
+files: []

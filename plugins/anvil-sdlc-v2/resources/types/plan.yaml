@@ -1,0 +1,46 @@
+name: plan
+parent: _core
+description: "A first-class, persisted implementation plan. Related to its work item via reference."
+fields:
+  version:
+    type: string
+    default: "v1"
+  approval:
+    type: enum
+    values: [draft, approved, revised, archived]
+    default: draft
+  work_item:
+    type: reference
+    description: The work item this plan belongs to
+template: |
+  ## Approach
+
+  {approach_summary}
+
+  ## Steps
+
+  | # | Description | Files | Status |
+  |---|-------------|-------|--------|
+  | 1 | {step} | {files} | ⬜ pending |
+
+  ## Risks / Open Questions
+
+  - {risk_or_question}
+
+  ## Estimated Scope
+
+  - Files to create: {count}
+  - Files to modify: {count}
+  - Test files: {count}
+
+  ## Approval Record
+
+  | Version | Date | Decision | Notes |
+  |---------|------|----------|-------|
+  | v1 | {{created}} | draft | Initial plan |
+
+  ## Progress
+
+  | Step | Status | Notes |
+  |------|--------|-------|
+  | 1 | ⬜ pending | |

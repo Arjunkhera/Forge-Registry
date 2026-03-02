@@ -1,0 +1,16 @@
+id: sdlc-orchestrator
+name: SDLC Orchestrator
+version: 1.0.0
+description: Central command hub for the SDLC workspace. Provides cross-project
+  dashboards, triage, search, release management, and command routing to other
+  skills.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - orchestrator
+  - dashboard
+dependencies: {}
+files: []

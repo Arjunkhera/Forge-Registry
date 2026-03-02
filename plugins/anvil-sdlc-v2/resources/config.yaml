@@ -1,0 +1,100 @@
+# SDLC v2 Work Item Type Configuration
+# Skills read this config at runtime to determine ceremony level and required steps per subtype.
+# This config lives in the plugin resources (not in Anvil's type system).
+
+work_item_types:
+  feature:
+    ceremony: full
+    requires_plan: true
+    requires_tests: true
+    requires_review: true
+    sections: [acceptance_criteria, technical_notes, dependencies]
+
+  bugfix:
+    ceremony: standard
+    requires_plan: true
+    requires_tests: true
+    requires_review: true
+    sections: [reproduction, fix_criteria, root_cause, technical_notes, dependencies]
+
+  refactor:
+    ceremony: standard
+    requires_plan: true
+    requires_tests: true      # regression emphasis
+    requires_review: true
+    sections: [current_state, target_state, invariants, technical_notes, dependencies]
+
+  spike:
+    ceremony: light
+    requires_plan: false
+    requires_tests: false
+    requires_review: false
+    can_skip_to: in_progress
+    sections: [question, time_box, approach, findings, recommendation]
+
+  hotfix:
+    ceremony: light
+    requires_plan: false
+    requires_tests: true      # minimal verification
+    requires_review: false
+    can_skip_to: in_progress
+    sections: [issue, fix, verification, follow_up]
+
+  task:
+    ceremony: standard
+    requires_plan: false
+    requires_tests: false
+    requires_review: false
+    sections: [deliverables, technical_notes, dependencies]
+
+  chore:
+    ceremony: light
+    requires_plan: false
+    requires_tests: false
+    requires_review: false
+    can_skip_to: in_progress
+    sections: [deliverables]
+
+# Ceremony levels define the process rigor
+ceremony_levels:
+  full:
+    description: "Complete pipeline — plan, workspace, implement, test, review, PR, docs sync, release"
+    flow: "plan feature → create work items → approve specs → per item: workspace → plan → approve → implement → test → review → PR → close → docs sync → release"
+  standard:
+    description: "Normal development loop — plan, implement, test, PR"
+    flow: "create work item → workspace → plan → approve → implement → test → PR → done"
+  light:
+    description: "Minimal overhead — work and capture"
+    flow: "(optional: create work item) → work → capture findings/fix → (optional: promote to proper work item)"
+
+# State machine — universal for all subtypes
+state_machine:
+  states: [draft, ready, in_progress, in_review, done, blocked, cancelled]
+  transitions:
+    draft: [ready, cancelled]
+    ready: [in_progress, cancelled]
+    in_progress: [in_review, blocked, cancelled]
+    blocked: [in_progress, cancelled]
+    in_review: [done, in_progress, cancelled]
+    done: []
+    cancelled: []
+
+# Priority levels
+priorities: [P0-critical, P1-high, P2-medium, P3-low]
+default_priority: P2-medium
+
+# Scratch journal tags
+scratch_tags:
+  - learning
+  - gotcha
+  - deviation
+  - blocker
+  - scope-change
+  - pivot
+  - decision
+  - idea
+  - question
+  - research
+  - conversation
+  - pattern
+  - edge-case
