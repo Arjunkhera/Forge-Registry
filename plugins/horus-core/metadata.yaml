@@ -1,0 +1,18 @@
+id: horus-core
+name: Horus Core
+version: 1.0.0
+description: >
+  System-awareness plugin. Teaches Claude when/how to use Anvil (state),
+  Vault (knowledge), and Forge (execution) based on natural language intent.
+type: plugin
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - system-awareness
+  - global
+skills:
+  - horus-anvil
+  - horus-vault
+  - horus-forge
+agents: []

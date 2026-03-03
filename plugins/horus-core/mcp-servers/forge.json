@@ -1,0 +1,23 @@
+{
+  "name": "forge",
+  "description": "Forge workspace and package manager — workspace lifecycle, repo index, artifact management",
+  "required": false,
+  "tools": [
+    "forge_search",
+    "forge_add",
+    "forge_install",
+    "forge_resolve",
+    "forge_list",
+    "forge_repo_list",
+    "forge_repo_resolve",
+    "forge_repo_workflow",
+    "forge_workspace_create",
+    "forge_workspace_list",
+    "forge_workspace_delete",
+    "forge_workspace_status"
+  ],
+  "connection": {
+    "transport": "http",
+    "url_config_key": "mcp_endpoints.forge"
+  }
+}

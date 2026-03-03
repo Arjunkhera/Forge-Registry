@@ -1,0 +1,15 @@
+id: horus-anvil
+name: Horus Anvil
+version: 1.0.0
+description: >
+  Anvil MCP reference skill. Covers all 8 Anvil tools, the dynamic type system,
+  note CRUD patterns, search and query views, and error recovery.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - anvil
+  - system-awareness
+dependencies: {}
+files: []
