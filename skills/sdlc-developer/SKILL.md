@@ -103,8 +103,12 @@ If no workspace exists for this work item:
 
 If a workspace already exists (resume scenario):
 1. Check workspace state via `forge_workspace_list` (filter by storyId)
-2. Read `repos[].worktreePath` from the workspace record — this is where code changes go
-3. All code operations happen in `worktreePath`
+2. Read `repos[].worktreePath` from the workspace record
+3. If `worktreePath` is set → all code operations happen there ✅
+4. If `repos` is empty or all `worktreePath` values are null (workspace created without repos):
+   - Collect repo names from Vault context (same as new workspace flow above)
+   - Call `forge_workspace_create` again with `repos` to get a new workspace with clones
+   - Do NOT write directly to the original local repo path from Vault
 
 ### Phase 5: Implement Step by Step (Flow 5)
 
