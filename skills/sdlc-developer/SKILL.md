@@ -28,8 +28,10 @@ You are the implementation engine. You pick up work items, understand their requ
 | `anvil_create_note` | Create plans, journal entries |
 | `anvil_search` | Find related plans, existing work |
 | `knowledge_resolve_context` | Load repo profiles, architecture, conventions, build commands |
-| `forge_workspace_create` | Create managed workspace with git worktrees |
+| `forge_workspace_create` | Create managed workspace (plugins, MCP configs, env vars) |
 | `forge_workspace_list` | Check for existing workspaces |
+| `forge_repo_clone` | Create an isolated reference clone of a repo on its own branch |
+| `forge_repo_list` | Discover repos in the local index |
 
 ## Scripts (D15)
 
@@ -86,33 +88,35 @@ On rejection or modification:
 - Revise plan and re-present
 - Log revision in journal
 
-### Phase 4: Bootstrap Workspace (if needed)
+### Phase 4: Bootstrap Workspace and Get Repo Clones
 
-If no workspace exists for this work item:
+**Workspace bootstrap (once per work item):**
 
-1. **Collect repo names** from the Vault context loaded in Phase 1 — the repos this work item touches (e.g. `["Forge"]`, `["Anvil", "Vault"]`)
-2. **Call `forge_workspace_create`** with:
-   - `config`: the project's workspace config (default: `sdlc-default`)
-   - `storyId`: the work item ID
-   - `storyTitle`: the work item title
-   - `repos`: the list of repo names — **this is required; omitting it skips clone creation and agents write directly to the original local repo**
-3. **Read the returned workspace record** — each entry in `repos[]` has a `worktreePath` (an isolated clone on disk, already on its feature branch)
-4. **All code operations happen inside `worktreePath`** — never in the original local repo path from Vault (those are for reference only)
-5. Run `scripts/branch-start.sh` inside the clone: `cd <worktreePath> && bash scripts/branch-start.sh <subtype> <storyId> <slug>`
-   - The feature branch was already created by Forge; the script will check it out if it exists
+If no workspace exists:
+1. Call `forge_workspace_create` with the project's workspace config — sets up plugins, MCP configs, and `workspace.env`
 
-If a workspace already exists (resume scenario):
-1. Check workspace state via `forge_workspace_list` (filter by storyId)
-2. Read `repos[].worktreePath` from the workspace record — this is where code changes go
-3. All code operations happen in `worktreePath`
+If a workspace exists (resume):
+1. Check state via `forge_workspace_list`
+2. Reuse existing workspace
+
+**Getting an isolated working copy (every time you need to touch a repo):**
+
+Repo cloning is independent of workspace creation. Whenever you need to make code changes to a repo:
+
+1. Call `forge_repo_list` to verify the repo exists in the index
+2. Call `forge_repo_clone` with:
+   - `repoName`: the repo name from the index
+   - `branchName`: your feature branch name (use the same branch pattern as `$SDLC_BRANCH_PATTERN`)
+3. **All code changes go into `clonePath` (or `hostClonePath` for display)**. Never write directly to the repo's `localPath`.
+4. Run `scripts/branch-start.sh` inside the clone path
+
+This applies whether you identify the repo at workspace creation time or mid-conversation. If you discover you need to work on a new repo during implementation, call `forge_repo_clone` at that point — do not create a new workspace.
 
 ### Phase 5: Implement Step by Step (Flow 5)
 
-> **Working directory**: All file reads, edits, and shell commands run inside the workspace clone (`repos[].worktreePath`). Vault repo profile paths are for reference only — never write directly to the original local repo.
-
 For each plan step:
 
-1. **Implement the changes** inside the workspace clone (`worktreePath`), following conventions from Vault
+1. **Implement the changes** following conventions from Vault
 2. **Update plan progress** via `anvil_update_note`:
    - Current step: ✅ done → 🔄 in progress → ⬜ pending
 3. **Commit** via `scripts/commit.sh`:
