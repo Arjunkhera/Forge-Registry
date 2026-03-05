@@ -18,7 +18,7 @@ Anvil is the live state system. All structured data (tasks, notes, journals, sto
 | `anvil_get_note` | Retrieve a note by ID | `noteId` (UUID) |
 | `anvil_update_note` | Update a note (PATCH) | `noteId` (required), `fields` (partial), `content` (replaces body, except journals which append) |
 | `anvil_search` | Free-text + filtered search | `query` (FTS5), `type`, `tags` (AND), `status`, `priority`, `due` (range), `limit`, `offset` |
-| `anvil_query_view` | Structured query with rendering | `filter`, `format` (list/table/board), `columns` (for table), `groupBy` (for board), `sort`, `limit`, `offset` |
+| `anvil_query_view` | Structured query with rendering | `view` (required: list/table/board), `filters` (object), `orderBy`, `columns` (for table), `groupBy` (required for board), `limit`, `offset` |
 | `anvil_list_types` | List all available note types | (none) |
 | `anvil_get_related` | Get links and backlinks for a note | `noteId` (UUID) |
 | `anvil_sync_pull` | Pull latest from remote | `remote` (default: origin), `branch` |
@@ -73,7 +73,7 @@ Best for: finding notes by keyword, filtering by type/status/tags.
 {
   "query": "authentication bug",
   "type": "task",
-  "status": "in_progress",
+  "status": "in-progress",
   "tags": ["backend"],
   "limit": 20
 }
@@ -81,14 +81,19 @@ Best for: finding notes by keyword, filtering by type/status/tags.
 
 Tags use AND semantics — a note must have ALL specified tags to match.
 
+**For an unfiltered search, omit `query` entirely** — passing `"*"` is invalid FTS5 syntax and will error.
+
 ### `anvil_query_view` — Structured views
 Best for: dashboards, kanban boards, sorted lists, tabular reports.
 
-**List format** (default):
+**`view` is required.** Use `filters` (not `filter`) for criteria. Use `orderBy` (not `sort`) for sorting.
+
+**List format:**
 ```json
 {
-  "filter": { "type": "task", "status": "in_progress" },
-  "sort": { "field": "modified", "direction": "desc" },
+  "view": "list",
+  "filters": { "type": "task", "status": "in-progress" },
+  "orderBy": { "field": "modified", "direction": "desc" },
   "limit": 50
 }
 ```
@@ -96,18 +101,18 @@ Best for: dashboards, kanban boards, sorted lists, tabular reports.
 **Table format** (specify columns):
 ```json
 {
-  "filter": { "type": "task" },
-  "format": "table",
+  "view": "table",
+  "filters": { "type": "task" },
   "columns": ["title", "status", "priority", "due"],
-  "sort": { "field": "priority", "direction": "asc" }
+  "orderBy": { "field": "priority", "direction": "asc" }
 }
 ```
 
-**Board format** (kanban-style, grouped):
+**Board format** (kanban-style, `groupBy` required):
 ```json
 {
-  "filter": { "type": "task" },
-  "format": "board",
+  "view": "board",
+  "filters": { "type": "task" },
   "groupBy": "status"
 }
 ```
@@ -141,3 +146,14 @@ Updates use **PATCH semantics** — only send fields you want to change:
 ## Relationships
 
 Use `anvil_get_related` to discover forward links (references this note makes) and backlinks (notes that reference this one). Useful for navigating project → stories → tasks hierarchies.
+
+## Known Gotchas
+
+These mistakes have been observed in practice — avoid them:
+
+| # | Mistake | Correct behaviour |
+|---|---------|------------------|
+| 1 | Guessing status values (e.g., `draft`, `ready`, `in_progress`) | **Always call `anvil_list_types` first.** Status enums are type-specific. Tasks/stories use `open`, `in-progress`, `blocked`, `done`. |
+| 2 | Passing `query: "*"` for an unfiltered search | **Omit `query` entirely.** FTS5 rejects bare `*` — leaving the field out returns all notes matching other filters. |
+| 3 | Passing `filters: { status: "..." }` as a nested object to `anvil_search` | **`anvil_search` takes flat top-level params** (`status`, `type`, `priority`, `tags`). Only `anvil_query_view` uses a nested `filters` object. |
+| 4 | Using `format`, `filter`, or `sort` with `anvil_query_view` | **The correct field names are `view` (required), `filters`, and `orderBy`.** The old names were stale schema — they will cause a validation error. |
