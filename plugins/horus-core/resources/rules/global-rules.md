@@ -30,7 +30,7 @@ You have access to three interconnected systems. Route requests to the correct s
 3. **Vault write-path is a pipeline.** Always: check duplicates → suggest metadata → validate → write. Never skip steps.
 4. **Anvil updates are PATCH.** Only send fields you want to change. Omitted fields are preserved.
 5. **Anvil journals append-only.** When updating journal content, new content is appended, not replaced.
-6. **Use `anvil_query_view` for structured views.** Use `format: "board"` with `groupBy` for kanban-style views, `format: "table"` with `columns` for tabular data.
+6. **Use `anvil_query_view` for structured views.** Use `view: "board"` with `groupBy` for kanban-style views, `view: "table"` with `columns` for tabular data. Use `filters` (not `filter`) and `orderBy` (not `sort`).
 7. **Forge workspaces vs direct git.** Use Forge for bootstrapping new work (workspace creation, worktree setup). Use direct git commands for daily operations within an existing workspace.
 
 For detailed tool reference, parameters, and error recovery, refer to the horus-anvil, horus-vault, and horus-forge skills.
