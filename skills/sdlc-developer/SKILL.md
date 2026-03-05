@@ -90,19 +90,29 @@ On rejection or modification:
 
 If no workspace exists for this work item:
 
-1. Call `forge_workspace_create` with the project's workspace config
-2. Forge resolves repos, creates git worktrees, installs plugins, emits configs
-3. Run `scripts/branch-start.sh` to create the feature branch
+1. **Collect repo names** from the Vault context loaded in Phase 1 — the repos this work item touches (e.g. `["Forge"]`, `["Anvil", "Vault"]`)
+2. **Call `forge_workspace_create`** with:
+   - `config`: the project's workspace config (default: `sdlc-default`)
+   - `storyId`: the work item ID
+   - `storyTitle`: the work item title
+   - `repos`: the list of repo names — **this is required; omitting it skips clone creation and agents write directly to the original local repo**
+3. **Read the returned workspace record** — each entry in `repos[]` has a `worktreePath` (an isolated clone on disk, already on its feature branch)
+4. **All code operations happen inside `worktreePath`** — never in the original local repo path from Vault (those are for reference only)
+5. Run `scripts/branch-start.sh` inside the clone: `cd <worktreePath> && bash scripts/branch-start.sh <subtype> <storyId> <slug>`
+   - The feature branch was already created by Forge; the script will check it out if it exists
 
 If a workspace already exists (resume scenario):
-1. Check workspace state via `forge_workspace_list`
-2. Reuse existing workspace and branch
+1. Check workspace state via `forge_workspace_list` (filter by storyId)
+2. Read `repos[].worktreePath` from the workspace record — this is where code changes go
+3. All code operations happen in `worktreePath`
 
 ### Phase 5: Implement Step by Step (Flow 5)
 
+> **Working directory**: All file reads, edits, and shell commands run inside the workspace clone (`repos[].worktreePath`). Vault repo profile paths are for reference only — never write directly to the original local repo.
+
 For each plan step:
 
-1. **Implement the changes** following conventions from Vault
+1. **Implement the changes** inside the workspace clone (`worktreePath`), following conventions from Vault
 2. **Update plan progress** via `anvil_update_note`:
    - Current step: ✅ done → 🔄 in progress → ⬜ pending
 3. **Commit** via `scripts/commit.sh`:
