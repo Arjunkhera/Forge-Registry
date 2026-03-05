@@ -126,6 +126,7 @@ When the user gives a command, determine which skill should handle it:
 | "How does X work?" | **gather-context** subagent |
 | "Ship this / release" | **orchestrator** → release |
 | "Clean up old work" | **orchestrator** → clean |
+| "What did we learn?", "retrospective", "wrap up session" | **retrospective** skill → summarize |
 
 ### Resume Work (Flow 3)
 

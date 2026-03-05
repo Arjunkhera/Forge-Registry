@@ -15,6 +15,7 @@ Complete software development lifecycle plugin for the Horus platform (Anvil + F
 | reviewer | Code review, PR creation |
 | docs | ADRs, Vault ingestion, doc health audits |
 | scratch | Append-only journals, tagged entries |
+| retrospective | Session learning extraction and promotion |
 
 ## Subagents
 
