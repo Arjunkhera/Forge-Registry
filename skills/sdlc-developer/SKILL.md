@@ -62,6 +62,17 @@ Before any implementation:
 
 If Vault is unavailable, degrade gracefully — use project-local config as fallback. Note reduced quality.
 
+### Phase 1b: Reconcile Spec with Reality
+
+Before creating a plan, verify the work item spec still matches the actual problem:
+
+1. **Compare spec to observed reality** — is the described problem/feature still accurate given what you can see in the code and context?
+2. **If the spec is stale or incomplete:**
+   - Update the work item body via `anvil_update_note` with the reconciled spec
+   - Log a journal entry via `anvil_create_note` (type: journal, tag: `#deviation`) explaining what changed and why
+   - Proceed with the updated spec — never implement against a spec you know to be wrong
+3. **If the spec matches reality:** proceed directly to plan creation
+
 ### Phase 2: Create Plan (if required)
 
 For work items where `requires_plan: true` (feature, bugfix, refactor) and no approved plan exists:
@@ -75,6 +86,7 @@ For work items where `requires_plan: true` (feature, bugfix, refactor) and no ap
 4. **Create plan in Anvil** via `anvil_create_note` with type `plan`:
    - Fields: version="v1", approval="draft", work_item reference
    - Body: approach, numbered steps with checkboxes, risks, scope estimate
+   - **Note:** The `plan` type is provided by the `anvil-sdlc-v2` plugin. If `anvil_create_note` returns `TYPE_NOT_FOUND`, the plugin types may not be synced to this Anvil instance. Fallback: use `type: note` with `tags: ["plan"]` — all other fields remain the same. Log a warning journal entry noting the fallback.
 
 5. **Present for human approval**
 
@@ -139,7 +151,11 @@ Before transitioning to `in_review`:
 
 ### Phase 7: Transition
 
-Update work item status to `in_review` via `anvil_update_note`.
+1. **Run tester before requesting review.** Invoke the `sdlc-tester` skill against this work item. Do not proceed to review if tests fail — fix the failures first and re-run.
+
+2. **Update work item status** to `in_review` via `anvil_update_note` only after tester passes.
+
+> **Next step:** Invoke the `sdlc-reviewer` skill for code review and PR creation.
 
 ## Handling Special Flows
 
@@ -178,6 +194,18 @@ Update work item status to `in_review` via `anvil_update_note`.
 - Plan identifies which changes go where
 - Separate branches and commits per repo
 - Cross-linked PRs
+
+## MCP Recovery After Session Restart
+
+When a session restarts, MCP connections (Anvil, Vault, Forge) drop silently. Steps that were in-flight at session end may not have been persisted. On restart:
+
+1. **Re-read the work item** via `anvil_get_note` to confirm its current status.
+2. **Re-read the plan** via `anvil_search` — check which steps are marked done (✅) vs pending (⬜).
+3. **Check for recent journal entries** via `anvil_search` — any entries logged in the previous session are still there.
+4. **Re-apply any terminal steps that were missed:**
+   - Status transition (e.g., `in_review`) — re-apply via `anvil_update_note` if the work item is still in a prior state
+   - PR link — re-add to work item history if it was created but not recorded
+5. **Confirm with the user** what state was recovered before continuing.
 
 ## Deviation Logging
 
