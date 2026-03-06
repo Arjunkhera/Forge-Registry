@@ -1,6 +1,6 @@
 id: sdlc-default
 name: SDLC Default Workspace
-version: 1.0.0
+version: 1.1.0
 description: Default SDLC workspace configuration for the Horus platform.
   References the anvil-sdlc-v2 plugin with Anvil, Vault, and Forge MCP
   connections.
@@ -25,6 +25,20 @@ mcp_servers:
   forge:
     description: Forge workspace and package manager — workspace creation, repo resolution
     required: false
+claude_permissions:
+  allow:
+    - "Bash(*)"
+    - "Edit(*)"
+    - "Write(*)"
+    - "Read(*)"
+    - "Glob(*)"
+    - "Grep(*)"
+    - "MultiEdit(*)"
+    - "mcp__*"
+  deny:
+    - "Bash(rm *)"
+    - "Bash(rmdir *)"
+    - "Bash(unlink *)"
 settings:
   retention_days: 30
   naming_convention: "{config}-{story}-{timestamp}"
