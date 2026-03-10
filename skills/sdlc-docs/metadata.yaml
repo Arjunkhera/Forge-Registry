@@ -1,0 +1,16 @@
+id: sdlc-docs
+name: SDLC Documentation
+version: 1.0.0
+description: Documentation keeper. ADRs, API docs, guides, Vault ingestion via
+  write-path pipeline, and documentation health audits.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - docs
+  - documentation
+  - adr
+dependencies: {}
+files: []

@@ -1,0 +1,15 @@
+id: horus-vault
+name: Horus Vault
+version: 1.0.0
+description: >
+  Vault MCP reference skill. Covers all 11 Vault tools, the read path
+  (resolve → search → get), page types, write path pipeline, and schema management.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - vault
+  - system-awareness
+dependencies: {}
+files: []

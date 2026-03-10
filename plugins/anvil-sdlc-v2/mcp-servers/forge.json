@@ -1,0 +1,22 @@
+{
+  "name": "forge",
+  "description": "Forge workspace and package manager — workspace lifecycle, repo index, skill discovery",
+  "required": false,
+  "tools": [
+    "forge_workspace_create",
+    "forge_workspace_list",
+    "forge_workspace_delete",
+    "forge_workspace_status",
+    "forge_repo_list",
+    "forge_repo_resolve",
+    "forge_skill_search",
+    "forge_skill_info",
+    "forge_plugin_info",
+    "forge_config_get",
+    "forge_config_set"
+  ],
+  "connection": {
+    "transport": "http",
+    "url_config_key": "mcp_endpoints.forge"
+  }
+}

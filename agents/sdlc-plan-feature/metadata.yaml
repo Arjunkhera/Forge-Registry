@@ -1,0 +1,15 @@
+id: sdlc-plan-feature
+name: Plan Feature
+version: 1.0.0
+description: "Feature decomposition: gather context, assess scope, decompose
+  into typed work items with dependencies and ceremony levels."
+type: agent
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - planning
+  - decomposition
+dependencies: {}
+files: []

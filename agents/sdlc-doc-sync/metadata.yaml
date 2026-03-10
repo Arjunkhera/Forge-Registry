@@ -1,0 +1,15 @@
+id: sdlc-doc-sync
+name: Doc Sync
+version: 1.0.0
+description: Post-implementation documentation sync. Identifies doc gaps, fills
+  them in project docs and Vault knowledge pages.
+type: agent
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - documentation
+  - sync
+dependencies: {}
+files: []

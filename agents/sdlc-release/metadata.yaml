@@ -1,0 +1,15 @@
+id: sdlc-release
+name: Release
+version: 1.0.0
+description: "Release lifecycle: identify completed work, generate changelog,
+  bump version, tag, push, and trigger post-release documentation sweep."
+type: agent
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - release
+  - versioning
+dependencies: {}
+files: []

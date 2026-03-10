@@ -1,0 +1,15 @@
+id: sdlc-planner
+name: SDLC Planner
+version: 1.0.0
+description: Strategic planner that decomposes high-level feature requests into
+  well-specified work items with full context from Vault and Anvil.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - planner
+  - decomposition
+dependencies: {}
+files: []

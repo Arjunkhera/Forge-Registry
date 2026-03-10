@@ -1,0 +1,16 @@
+id: sdlc-gather-context
+name: Gather Context
+version: 1.0.0
+description: Deep research across Vault, Anvil, and code. Multi-source search,
+  cross-referencing, and synthesized briefings. Standalone or as first step in
+  other subagents.
+type: agent
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - research
+  - context
+dependencies: {}
+files: []

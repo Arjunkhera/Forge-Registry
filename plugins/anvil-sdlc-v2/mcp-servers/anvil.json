@@ -1,0 +1,18 @@
+{
+  "name": "anvil",
+  "description": "Anvil MCP server — note management, search, query views, type system",
+  "required": true,
+  "tools": [
+    "anvil_create_note",
+    "anvil_get_note",
+    "anvil_update_note",
+    "anvil_search",
+    "anvil_query_view",
+    "anvil_list_types",
+    "anvil_get_related"
+  ],
+  "connection": {
+    "transport": "http",
+    "url_config_key": "mcp_endpoints.anvil"
+  }
+}

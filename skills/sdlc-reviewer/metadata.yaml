@@ -1,0 +1,17 @@
+id: sdlc-reviewer
+name: SDLC Reviewer
+version: 1.0.0
+description: Code reviewer and PR manager. Reviews implementations against
+  specs, plans, and conventions. Creates PRs via bundled scripts with full
+  context.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - reviewer
+  - code-review
+  - pr
+dependencies: {}
+files: []

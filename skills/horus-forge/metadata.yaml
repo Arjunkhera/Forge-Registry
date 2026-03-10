@@ -1,0 +1,15 @@
+id: horus-forge
+name: Horus Forge
+version: 1.0.0
+description: >
+  Forge MCP reference skill. Covers all 11 Forge tools, workspace lifecycle,
+  repository management, artifact discovery and installation.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - forge
+  - system-awareness
+dependencies: {}
+files: []

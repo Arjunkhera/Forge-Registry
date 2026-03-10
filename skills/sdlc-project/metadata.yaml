@@ -1,0 +1,15 @@
+id: sdlc-project
+name: SDLC Project Manager
+version: 1.0.0
+description: Create and manage development projects. Handles project CRUD, Vault
+  context resolution, Forge repo resolution, program linking, and archival.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - project
+  - management
+dependencies: {}
+files: []

@@ -1,0 +1,51 @@
+id: sdlc-default
+name: SDLC Default Workspace
+version: 1.1.0
+description: Default SDLC workspace configuration for the Horus platform.
+  References the anvil-sdlc-v2 plugin with Anvil, Vault, and Forge MCP
+  connections.
+type: workspace-config
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - workspace
+  - default
+plugins:
+  - anvil-sdlc-v2
+skills: []
+mcp_servers:
+  anvil:
+    description: Anvil note management — work items, plans, projects, scratch journals
+    required: true
+  vault:
+    description: Vault knowledge service — architecture docs, repo profiles, conventions
+    required: false
+  forge:
+    description: Forge workspace and package manager — workspace creation, repo resolution
+    required: false
+claude_permissions:
+  allow:
+    - "Bash(*)"
+    - "Edit(*)"
+    - "Write(*)"
+    - "Read(*)"
+    - "Glob(*)"
+    - "Grep(*)"
+    - "MultiEdit(*)"
+    - "mcp__*"
+  deny:
+    - "Bash(rm *)"
+    - "Bash(rmdir *)"
+    - "Bash(unlink *)"
+settings:
+  retention_days: 30
+  naming_convention: "{config}-{story}-{timestamp}"
+git_workflow:
+  branch_pattern: "{subtype}/{id}-{slug}"
+  base_branch: main
+  stash_before_checkout: true
+  commit_format: conventional
+  pr_template: true
+  signed_commits: false

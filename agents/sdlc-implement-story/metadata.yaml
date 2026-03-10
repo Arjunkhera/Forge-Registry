@@ -1,0 +1,16 @@
+id: sdlc-implement-story
+name: Implement Story
+version: 1.0.0
+description: "Full work item lifecycle: gather context, workspace, plan,
+  implement, test, review. The primary subagent for end-to-end story
+  implementation."
+type: agent
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - implementation
+  - lifecycle
+dependencies: {}
+files: []
