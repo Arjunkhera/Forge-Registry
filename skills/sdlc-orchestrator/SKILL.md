@@ -115,6 +115,9 @@ When the user gives a command, determine which skill should handle it:
 | "Create a new project for..." | **project** skill → create |
 | "Create a story/work item for..." | **story** skill → create |
 | "I want to build X" | **planner** skill → plan-feature |
+| "Design this feature", "explore design options for..." | **designer** skill → propose |
+| "Walk me through the design options" | **designer** skill → decide |
+| "Compare approaches for..." | **designer** skill → compare |
 | "Start working on #{id}" | **developer** skill → implement |
 | "What's the status?" | **orchestrator** → status |
 | "Implement story #{id}" | **developer** skill → plan + implement |

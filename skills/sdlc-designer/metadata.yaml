@@ -1,0 +1,17 @@
+id: sdlc-designer
+name: SDLC Designer
+version: 1.0.0
+description: Design architect that produces structured design proposals with multiple
+  architectural options, trade-off analysis, Mermaid diagrams, and iterative decision-making.
+  Fills the gap between spike exploration and feature planning.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - designer
+  - architecture
+  - design-proposal
+dependencies: {}
+files: []
