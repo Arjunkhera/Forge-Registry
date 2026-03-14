@@ -44,6 +44,8 @@ Based on context:
 
 - **If the request is vague or feasibility is uncertain:** Propose a spike first (subtype: `spike`). Define the question, approach, and time box. Once the spike concludes, its findings feed back into planning.
 
+- **If the scope is architecturally complex:** Route to the `designer` skill before decomposition. Trigger this when: the feature involves multiple systems or services, there are significant design trade-offs to evaluate, or a spike concluded with open architectural questions. Invoke `sdlc-design-proposal` agent and wait for the design proposal to be complete before proceeding to Step 3.
+
 - **If the scope is clear:** Proceed to decomposition.
 
 - **If the scope is very large:** Suggest phasing. Create a program or use an existing one. Break into multiple features across phases.
