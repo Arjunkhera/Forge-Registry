@@ -10,21 +10,37 @@ description: >
 
 Vault is the knowledge base. It stores long-lived, structured documentation about codebases, conventions, procedures, and decisions.
 
+## Multi-Vault Architecture
+
+Horus supports multiple vault instances (e.g., `personal` and `work`). All tools route through `vault-router`, which sits between the MCP and the vault instances:
+
+- **Read tools** (search, resolve-context, list-by-scope, check-duplicates, suggest-metadata) **fan out** to all vaults and merge results. Pass `vault=` to restrict to one vault.
+- **Write/routed tools** (get-page, get-related, write-page, validate-page, registry-add, schema) **route to a specific vault** — by explicit `vault=` param, UUID registry lookup, or default vault.
+
 ## Tools
 
 | Tool | Purpose | Key Parameters |
 |------|---------|---------------|
-| `knowledge_resolve_context` | Get all applicable pages for a repo | `repo` (required), `include_full` (default: false) |
-| `knowledge_search` | Hybrid search (keyword + semantic + reranking) | `query` (required), `scope` ({program, repo}), `type`, `mode`, `limit` |
-| `knowledge_get_page` | Read a page by ID (file path) | `id` (e.g., `repos/anvil.md`) |
-| `knowledge_get_related` | Follow links from a page | `id` (source page) |
-| `knowledge_list_by_scope` | Browse pages for a program/repo | `scope` ({program, repo}), `type`, `mode`, `tags`, `limit` |
-| `knowledge_validate_page` | Validate page against schema | `content` (full markdown with YAML frontmatter) |
-| `knowledge_suggest_metadata` | Auto-suggest frontmatter fields | `content` (markdown), `hints` (optional partial knowledge) |
-| `knowledge_check_duplicates` | Check overlap with existing pages | `title`, `content`, `threshold` (0-1, default: 0.75) |
-| `knowledge_get_schema` | Get full schema + registry contents | (none) |
-| `knowledge_registry_add` | Add tag/repo/program to a registry | `registry` (tags/repos/programs), `entry` ({id, description?, aliases?}) |
-| `knowledge_write_page` | Write page, commit to branch, open PR | `path` (required), `content` (required), `pr_title`, `pr_body`, `commit_message` |
+| `knowledge_resolve_context` | Get all applicable pages for a repo | `repo` (required), `include_full` (default: false), `vault` (optional) |
+| `knowledge_search` | Hybrid search (keyword + semantic + reranking) | `query` (required), `scope` ({program, repo}), `type`, `mode`, `limit`, `vault` (optional) |
+| `knowledge_get_page` | Read a page by UUID | `id` (UUID, required), `vault` (optional) |
+| `knowledge_get_related` | Follow links from a page | `id` (UUID, required), `vault` (optional) |
+| `knowledge_list_by_scope` | Browse pages for a program/repo | `scope` ({program, repo}), `type`, `mode`, `tags`, `limit`, `vault` (optional) |
+| `knowledge_validate_page` | Validate page against schema | `content` (full markdown with YAML frontmatter), `vault` (optional) |
+| `knowledge_suggest_metadata` | Auto-suggest frontmatter fields | `content` (markdown), `hints` (optional), `vault` (optional) |
+| `knowledge_check_duplicates` | Check overlap with existing pages | `title`, `content`, `threshold` (0-1, default: 0.75), `vault` (optional) |
+| `knowledge_get_schema` | Get full schema + registry contents | `vault` (optional — defaults to default vault) |
+| `knowledge_registry_add` | Add tag/repo/program to a registry | `registry` (tags/repos/programs), `entry` ({id, description?, aliases?}), `vault` (optional) |
+| `knowledge_write_page` | Write page, commit to branch, open PR | `path` (required), `content` (required), `pr_title`, `pr_body`, `commit_message`, `vault` (optional) |
+
+### The `vault` parameter
+
+All tools accept an optional `vault` string (e.g., `"personal"`, `"work"`):
+
+- **Omitted on read tools** → fan-out: results merged from all vaults, each result tagged with `source_vault`
+- **Specified on read tools** → restrict to that vault only
+- **Omitted on write/routed tools** → UUID registry lookup (for existing pages) or default vault (for new pages)
+- **Specified on write/routed tools** → route directly to that vault, bypassing UUID lookup
 
 ## Read Path
 
@@ -51,6 +67,11 @@ knowledge_list_by_scope(scope, type?) → list pages
 ### 4. Relationship exploration
 ```
 knowledge_get_related(id) → follow links (related, depends-on, consumed-by, applies-to)
+```
+
+### 5. Vault-specific read ("search only my work vault")
+```
+knowledge_search(query, vault: "work")
 ```
 
 ## Page Types
@@ -82,6 +103,7 @@ knowledge_check_duplicates(title, content, threshold?)
 ```
 - Score >= threshold → novel content, safe to create new page
 - Score < threshold → overlap exists, merge into existing page instead
+- Add `vault=` to check within a specific vault only
 
 ### 2. Suggest metadata
 ```
@@ -99,23 +121,25 @@ knowledge_validate_page(content)
 
 ### 4. Write
 ```
-knowledge_write_page(path, content, pr_title?, pr_body?, commit_message?)
+knowledge_write_page(path, content, pr_title?, pr_body?, commit_message?, vault?)
 ```
 - Creates a new branch, commits the page, and opens a GitHub PR
 - Returns the PR URL for human review
+- Omit `vault=` to write to default vault; specify to target a specific vault
 
 ## Schema and Registries
 
 ### Get schema + registries
 ```
-knowledge_get_schema()
+knowledge_get_schema(vault?)
 ```
 Returns all page types, valid field values, and registry contents (tags, repos, programs).
+Defaults to the default vault's schema (schemas are assumed uniform across vaults).
 
 ### Add to a registry
 If validation rejects a value that should exist:
 ```
-knowledge_registry_add(registry: "tags"|"repos"|"programs", entry: {id, description?, aliases?})
+knowledge_registry_add(registry: "tags"|"repos"|"programs", entry: {id, description?, aliases?}, vault?)
 ```
 
 ## Common Patterns
@@ -136,4 +160,14 @@ knowledge_resolve_context(repo: "my-repo", include_full: true)
 **Understanding a program's architecture:**
 ```
 knowledge_search(query: "architecture", scope: {program: "horus"}, type: "keystone")
+```
+
+**Writing to a specific vault explicitly:**
+```
+knowledge_write_page(path, content, vault: "work")
+```
+
+**Searching only one vault:**
+```
+knowledge_search(query: "auth conventions", vault: "personal")
 ```
