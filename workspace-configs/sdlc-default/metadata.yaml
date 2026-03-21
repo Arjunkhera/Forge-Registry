@@ -34,7 +34,7 @@ claude_permissions:
     - "Glob(*)"
     - "Grep(*)"
     - "MultiEdit(*)"
-    - "mcp__*"
+    - "mcp__*__*"
   deny:
     - "Bash(rm *)"
     - "Bash(rmdir *)"
