@@ -8,7 +8,7 @@ description: >
 
 # Horus CLI — Command Reference
 
-The `horus` CLI manages the Horus Docker/Podman Compose stack (Anvil, Vault, Forge, QMD). It handles setup, lifecycle, configuration, and diagnostics.
+The `horus` CLI manages the Horus Docker/Podman Compose stack (Anvil, Vault, Forge, Typesense). It handles setup, lifecycle, configuration, and diagnostics.
 
 ## Commands
 

@@ -17,7 +17,7 @@ Anvil is the live state system. All structured data (tasks, notes, journals, sto
 | `anvil_create_note` | Create a new note | `type` (required), `title` (required), `fields` (type-specific), `content` (markdown body), `use_template` (default: true) |
 | `anvil_get_note` | Retrieve a note by ID | `noteId` (UUID) |
 | `anvil_update_note` | Update a note (PATCH) | `noteId` (required), `fields` (partial), `content` (replaces body, except journals which append) |
-| `anvil_search` | Free-text + filtered search | `query` (FTS5), `type`, `tags` (AND), `status`, `priority`, `due` (range), `limit`, `offset` |
+| `anvil_search` | Free-text + filtered search | `query` (Typesense; FTS5 fallback), `type`, `tags` (AND), `status`, `priority`, `due` (range), `limit`, `offset` |
 | `anvil_query_view` | Structured query with rendering | `view` (required: list/table/board), `filters` (object), `orderBy`, `columns` (for table), `groupBy` (required for board), `limit`, `offset` |
 | `anvil_list_types` | List all available note types | (none) |
 | `anvil_get_related` | Get links and backlinks for a note | `noteId` (UUID) |
@@ -66,8 +66,8 @@ The type system is dynamic — the vault owner defines types. Each type has:
 
 ## Searching Notes
 
-### `anvil_search` — Free-text + filters (FTS5)
-Best for: finding notes by keyword, filtering by type/status/tags.
+### `anvil_search` — Free-text + filters (Typesense)
+Best for: finding notes by keyword, filtering by type/status/tags. Uses Typesense as primary search engine with FTS5 as emergency fallback.
 
 ```json
 {
