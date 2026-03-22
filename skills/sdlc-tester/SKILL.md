@@ -9,7 +9,8 @@ description: >
   "does it work", or similar quality-intent phrases.
 
   The tester skill loads conventions from Vault and reads work item specs from Anvil. It uses
-  `scripts/run-tests.sh` for deterministic test execution.
+  `scripts/run-tests.sh` for deterministic test execution and the horus test-env CLI for
+  integration testing when needed.
 ---
 
 # Tester Skill
@@ -32,6 +33,52 @@ You are the quality gate. You verify that implementations meet their acceptance 
 |--------|---------|-------------|
 | `run-tests.sh` | Test harness wrapper — runs project test command | `SDLC_TEST_CMD`, `SDLC_LINT_CMD` |
 
+## Test Loop Decision
+
+Choose the appropriate test loop based on what changed:
+
+### Inner Loop (unit + type checks)
+
+Use when changes are **confined to a single package** — logic, types, module internals.
+
+```
+pnpm test                    # unit tests in the session worktree
+tsc --noEmit                 # type check
+```
+
+Run from inside the session path (`sessionPath` from `forge_develop`).
+
+**When to use:** Feature implementation, bug fixes, refactors within a single repo/package.
+
+### Outer Loop (integration + full stack)
+
+Use when changes **touch service boundaries, MCP tool schemas, Docker configs, or cross-package interfaces**.
+
+```bash
+horus test-env acquire       # start shadow stack on alternate ports
+horus test-env seed          # load isolated test data
+pnpm run test:integration    # run integration test suite against shadow stack
+horus test-env release       # tear down shadow stack + clean up test data
+```
+
+**When to use:**
+- New MCP tools or changes to existing tool schemas
+- Changes to Docker Compose, service configs, or port assignments
+- Cross-service data flows (Anvil ↔ Forge, Forge ↔ Vault)
+- Any change where unit tests alone cannot verify end-to-end correctness
+
+**Note:** `horus test-env acquire` starts a shadow stack on alternate ports so it does not conflict with the running production stack. Test data is fully isolated and cleaned up on `release`.
+
+### Decision table
+
+| Changed | Inner Loop | Outer Loop |
+|---------|------------|------------|
+| Single-package logic (no MCP schema change) | ✅ required | optional |
+| MCP tool schema (new tool, new param) | ✅ required | ✅ required |
+| Docker / compose / service config | — | ✅ required |
+| Skill / agent / workspace config (text only) | — | — (manual review) |
+| Multi-package refactor | ✅ required | ✅ recommended |
+
 ## Core Workflow
 
 ### Phase 1: Load Context
@@ -44,6 +91,7 @@ You are the quality gate. You verify that implementations meet their acceptance 
    - Coverage targets
    - Test organization conventions
    - Mocking standards
+5. **Determine test loop** — apply the decision table above based on what changed
 
 ### Phase 2: Create Test Plan
 
@@ -72,10 +120,24 @@ Write tests following project conventions from Vault:
 
 ### Phase 4: Execute Tests
 
-Run tests via `scripts/run-tests.sh`:
+**Inner loop** — run from session path:
+```bash
+pnpm test           # unit tests
+tsc --noEmit        # type check
+```
+
+Or via `scripts/run-tests.sh`:
 - Captures pass/fail counts
 - Captures coverage metrics
 - Captures duration
+
+**Outer loop** — run from workspace root:
+```bash
+horus test-env acquire
+horus test-env seed
+pnpm run test:integration
+horus test-env release
+```
 
 ### Phase 5: Report
 
@@ -93,6 +155,7 @@ Map results back to acceptance criteria:
 - Passed: X/Y
 - Failed: Z/Y
 - Coverage: XX%
+- Loop: inner / outer / both
 
 ### Recommendation: ACCEPT / REJECT
 {reasoning}
@@ -109,7 +172,7 @@ Log results in work item journal via `anvil_create_note`.
 
 ### Flow 8: Refactor — Regression Mode
 
-1. **BEFORE refactor:** Run full suite, record baseline (pass/fail counts, coverage)
+1. **BEFORE refactor:** Run full suite (inner loop), record baseline (pass/fail counts, coverage)
 2. **AFTER refactor:** Run full suite again
 3. **Compare:** Zero regressions allowed. Any test that passed before must pass after.
 4. Report: baseline vs post-refactor comparison
