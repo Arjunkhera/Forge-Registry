@@ -1,185 +1,238 @@
 ---
 name: horus-forge
 description: >
-  Forge MCP reference. Use when you need to manage workspaces, start code sessions,
-  discover repos, or install plugins and skills. Covers workspace lifecycle, code session
-  lifecycle, repo index, and the artifact system.
+  Forge MCP reference. Use when you need to manage workspaces (context containers),
+  create code sessions (forge_develop), discover repos, resolve git workflows,
+  or install plugins and skills. Covers workspaces, sessions, repo index, and
+  the artifact system.
 ---
 
 # Horus Forge — MCP Tool Reference
 
-Forge is the execution and environment system. It manages workspaces, tracks repositories, creates isolated code sessions (git worktrees), and installs plugins/skills.
+Forge is the execution and environment system. It manages context-only workspaces, isolated code sessions (git worktrees), a local repository index, and a versioned artifact system for skills, plugins, and agents.
 
 ## Tools
 
 | Tool | Purpose | Key Parameters |
 |------|---------|---------------|
+| `forge_workspace_create` | Create a context-only workspace | `config` (required), `repos`, `storyId`, `storyTitle`, `configVersion` |
+| `forge_workspace_list` | List tracked workspaces | `status` (active/paused/completed/archived), `storyId` |
+| `forge_workspace_status` | Get full details for a workspace | `id` (required) |
+| `forge_workspace_delete` | Delete a workspace | `id` (required), `force` |
+| `forge_develop` | Create or resume a code session (git worktree) | `repo` (required), `workItem` (required), `branch`, `workflow` |
+| `forge_session_list` | List active code sessions | `repo`, `workItem` |
+| `forge_session_cleanup` | Clean up stale sessions | `workItem`, `olderThan` (e.g., `"30d"`), `auto` |
+| `forge_repo_list` | List repos from local index | `query` (filter), `language` (filter) |
+| `forge_repo_resolve` | Find a specific repo by name or URL | `name` or `remoteUrl` |
+| `forge_repo_workflow` | Get/save git workflow config for a repo | `name` (required), `workflow` (optional, to save) |
 | `forge_search` | Search the registry for artifacts | `query` (required), `type` (skill/agent/plugin) |
 | `forge_add` | Add artifact refs to forge.yaml | `refs` (array of ref strings, e.g., `["skill:developer@1.0.0"]`) |
 | `forge_install` | Install all artifacts from forge.yaml | `dryRun` (preview), `target` (claude-code/cursor/plugin) |
 | `forge_resolve` | Inspect a single artifact with deps | `ref` (e.g., `"plugin:anvil-sdlc-v2"`) |
 | `forge_list` | List installed or available artifacts | `scope` (installed/available), type filter |
-| `forge_repo_list` | List repos from local index | `query` (filter), `language` (filter) |
-| `forge_repo_resolve` | Find a specific repo by name or URL | `name` or `remoteUrl` |
-| `forge_repo_workflow` | Get git workflow config for a repo | `name` (required) — returns strategy, default branch, PR target |
-| `forge_develop` | Create or resume a code session (git worktree) for a repo + work item | `repo` (required), `workItem` (required), `workflow` (optional, for confirmation) |
-| `forge_session_list` | List active code sessions | `repo` (filter), `workItem` (filter), `status` (active/stale/all) |
-| `forge_session_cleanup` | Clean up sessions by work item status or age | `auto` (boolean), `sessionId` (specific session), `olderThanDays` |
-| `forge_workspace_create` | Create a new workspace from config | `config` (required), `storyId`, `storyTitle` |
-| `forge_workspace_list` | List tracked workspaces | `status` (active/paused/completed/archived), `storyId` |
-| `forge_workspace_delete` | Delete a workspace | `id` (required), `force` |
-| `forge_workspace_status` | Get full details for a workspace | `id` (required) |
 
-## Code Sessions (`forge_develop`)
+## Workspaces — Context Containers
 
-Code sessions are isolated git worktrees tied to a work item. They are the primary way to get a working copy of a repo for implementation.
+Workspaces are **context-only folders** that configure an AI agent's environment. They do NOT clone repositories or create git worktrees. Use `forge_develop` for isolated code sessions.
 
-### Creating or resuming a session
-```
-forge_develop({ repo: "my-repo", workItem: "WI-42" })
-```
-This will:
-1. Resolve the repo from the index (3-tier: user index → managed pool → fresh clone)
-2. Check for an existing session for this repo + work item combination
-3. **Resume** if found — returns existing `sessionPath` and `branch`
-4. **Create** if not found — creates a git worktree, installs enforcement scripts, returns new `sessionPath` and `branch`
-
-### Response: session ready
-```json
-{
-  "status": "created",   // or "resumed"
-  "sessionPath": "/Users/arkhera/Horus/data/sessions/my-repo/WI-42/",
-  "branch": "feature/wi-42-my-feature",
-  "workflow": { "type": "owner", "defaultBranch": "main" }
-}
-```
-All code changes go into `sessionPath`. The session includes enforcement scripts at `.forge/scripts/`.
-
-### Response: workflow confirmation needed
-```json
-{
-  "status": "needs_workflow_confirmation",
-  "detected": {
-    "type": "fork",
-    "upstream": "git@github.com:org/repo.git",
-    "fork": "git@github.com:myuser/repo.git"
-  },
-  "message": "Workflow not confirmed for my-repo. Please confirm or correct the detected values."
-}
-```
-Present detected values to user. On confirmation, re-call with `workflow` parameter:
-```
-forge_develop({ repo: "my-repo", workItem: "WI-42",
-                workflow: { type: "fork", upstream: "git@github.com:org/repo.git" } })
-```
-This saves the workflow and creates the session in one shot.
-
-### Session enforcement scripts
-Each session has `.forge/scripts/` containing:
-- `push.sh` — pushes to the correct remote for this repo's workflow type
-- `create-pr.sh` — creates a PR against the correct target (handles fork→upstream, owner→same-repo, contributor→same-repo)
-- `pre-push` hook — installed in `.git/hooks/`, rejects pushes to wrong remotes
-- `commit-msg` hook — validates conventional commits when configured
-
-### Multi-agent isolation
-If two agents call `forge_develop` with the same `repo` + `workItem`, they get separate sessions (`-2` suffix). No collisions.
-
-## Session Lifecycle (`forge_session_list`, `forge_session_cleanup`)
-
-### Listing sessions
-```
-forge_session_list()                              // All active sessions
-forge_session_list({ repo: "my-repo" })           // For a specific repo
-forge_session_list({ workItem: "WI-42" })         // For a specific work item
-forge_session_list({ status: "stale" })           // Sessions with no recent activity
-```
-Returns: sessionId, repo, workItem, branch, sessionPath, createdAt, lastModified, status.
-
-### Cleaning up sessions
-```
-forge_session_cleanup({ auto: true })             // Auto-clean sessions whose work items are done/cancelled
-forge_session_cleanup({ sessionId: "abc123" })    // Clean a specific session
-forge_session_cleanup({ olderThanDays: 30 })      // Clean sessions older than 30 days
-```
-Auto-cleanup queries Anvil for work item status. Sessions tied to `done` or `cancelled` work items are removed. Returns a summary of what was cleaned and what was skipped (with reasons).
-
-## Workspace Lifecycle
-
-Workspaces are context envelopes — they install skills, MCP configs, CLAUDE.md, and environment variables. They do **not** clone repos. Code sessions (`forge_develop`) handle code isolation separately.
+A workspace provides:
+- MCP server connections (Anvil, Vault, Forge endpoints)
+- Installed skills and plugins
+- CLAUDE.md / .cursorrules context files
+- workspace.env with SDLC git workflow variables
+- Claude permissions (allow/deny rules)
+- PreToolUse guard hook (prevents edits to files outside workspace)
 
 ### Creating a workspace
+
 ```
-forge_workspace_create({ config: "sdlc-default", storyId: "abc123" })
+forge_workspace_create(config: "sdlc-default")
+forge_workspace_create(config: "sdlc-default", repos: ["my-repo"])
+forge_workspace_create(config: "sdlc-default", storyId: "abc123", storyTitle: "Add auth")
 ```
+
 This will:
-1. Resolve the workspace config artifact
-2. Install plugins and skills
-3. Set up MCP server connections
-4. Emit CLAUDE.md and workspace.env
-5. Register the workspace in the metadata store
+1. Resolve the workspace-config artifact from the registry
+2. Create a folder at `~/Horus/data/workspaces/{name}/`
+3. Install plugins and skills (for both Claude Code and Cursor targets)
+4. Configure MCP server connections in `.claude/settings.local.json` and `.cursor/mcp.json`
+5. Emit guard hook to block edits outside workspace directories
+6. Write context files (CLAUDE.md, .cursorrules, workspace.env)
+7. Register workspace in the metadata store
+
+**storyId is optional** — it's metadata, not a requirement. Without it, the workspace name uses the generated ID.
+
+### Workspace folder structure
+
+```
+sdlc-default-ws-abc12345/
+├── forge.yaml                  # Artifact declarations
+├── forge.lock                  # Installed versions + file hashes
+├── CLAUDE.md                   # Agent context
+├── .cursorrules                # Cursor equivalent
+├── workspace.env               # SDLC env vars
+├── .claude/
+│   ├── settings.json           # Project-level permissions
+│   ├── settings.local.json     # MCP server URLs
+│   ├── mcp-servers/
+│   ├── scripts/guard-source-repos.sh
+│   └── commands/               # Installed skill files
+└── .cursor/
+    ├── mcp.json
+    └── rules/                  # Installed skill files (.mdc)
+```
 
 ### Lifecycle states
+
 ```
 active → paused → active (resume)
-active → completed → archived
-any → deleted
+active → completed → archived (terminal)
+any → deleted (removes folder from disk)
 ```
 
+Retention cleanup: removes active/paused workspaces older than N days (default 30).
+
 ### Listing workspaces
+
 ```
-forge_workspace_list({ status: "active" })       // Active only
-forge_workspace_list()                           // All non-archived
-forge_workspace_list({ storyId: "abc123" })      // By linked story
+forge_workspace_list(status: "active")       // Active only
+forge_workspace_list()                        // All non-archived
+forge_workspace_list(storyId: "abc123")       // By linked story
 ```
 
 ### Getting workspace details
+
 ```
-forge_workspace_status({ id: "ws-abc12345" })
+forge_workspace_status(id: "ws-abc12345")
 ```
-Returns: name, config, status, path, story link, timestamps.
+Returns: name, config, status, path, repos (with local paths), story link, timestamps.
 
 ### Deleting a workspace
+
 ```
-forge_workspace_delete({ id: "ws-abc12345", force: true })
+forge_workspace_delete(id: "ws-abc12345", force: true)
 ```
-Removes the workspace folder from disk. Does **not** remove code sessions — clean those separately with `forge_session_cleanup`.
+Removes workspace folder from disk. Does NOT touch code sessions (those are managed separately).
+
+## Code Sessions — forge_develop
+
+Sessions create **git worktrees** for isolated coding. Each session is linked to a repository and a work item (Anvil note).
+
+### Creating/resuming a session
+
+```
+forge_develop(repo: "my-repo", workItem: "task-abc")
+```
+
+This will:
+1. Resolve the repo via 3-tier lookup:
+   - Tier 1: User repos (from configured scan paths)
+   - Tier 2: Managed pool (`~/Horus/data/repos/`)
+   - Tier 3: NOT YET SUPPORTED (would clone from remote)
+2. Check for existing session → **resume** if found (updates lastModified)
+3. Verify workflow is confirmed (or accept inline `workflow` parameter)
+4. `git fetch` on the base repo
+5. `git worktree add {sessionPath} -b {branch} {baseBranch}`
+6. Install enforcement hooks
+7. Save session record
+
+Returns: `{ sessionId, sessionPath, hostSessionPath, branch, baseBranch, workflow, resumed }`
+
+### Multiple agents on same work item
+
+Same workItem can have multiple concurrent sessions (agent slots):
+- Slot 1 path: `{slug}-{repo}`
+- Slot 2+ path: `{slug}-{repo}-2`, `{slug}-{repo}-3`, etc.
+
+Max sessions ceiling: configurable (default 20). Warns when reached, suggests cleanup.
+
+### Listing sessions
+
+```
+forge_session_list()                          // All sessions
+forge_session_list(repo: "my-repo")           // By repo
+forge_session_list(workItem: "task-abc")      // By work item
+```
+
+### Cleaning up sessions
+
+```
+forge_session_cleanup(workItem: "task-abc")   // Clean specific work item
+forge_session_cleanup(olderThan: "30d")       // Clean old sessions
+forge_session_cleanup(auto: true)             // Auto-cleanup by Anvil status
+```
+
+**Auto-cleanup checks Anvil note status:**
+
+| Anvil Status | Age | Action |
+|-------------|-----|--------|
+| `done` | > 7 days | Clean up |
+| `cancelled` | Any | Clean up immediately |
+| `in_progress` / `in_review` | Any | Skip |
+| Not found | Any | Warn, skip |
+
+Cleanup removes the git worktree, prunes the base repo, removes the session directory, and deletes the record.
 
 ## Repository Management
 
 Forge maintains a local index of git repositories for quick lookup.
 
 ### Discovering repos
+
 ```
 forge_repo_list()                             // All indexed repos
-forge_repo_list({ query: "auth" })            // Filter by name/path/URL
-forge_repo_list({ language: "typescript" })   // Filter by language
+forge_repo_list(query: "auth")                // Filter by name/path/URL
+forge_repo_list(language: "typescript")        // Filter by language
 ```
 
 ### Resolving a specific repo
+
 ```
-forge_repo_resolve({ name: "anvil" })         // By name
-forge_repo_resolve({ remoteUrl: "git@github.com:org/repo.git" })  // By URL
+forge_repo_resolve(name: "anvil")             // By name
+forge_repo_resolve(remoteUrl: "git@github.com:org/repo.git")  // By URL
 ```
+
 Returns: name, local path, remote URL, default branch, language, framework.
 
-### Getting git workflow config
+### Getting/saving git workflow config
+
 ```
-forge_repo_workflow({ name: "my-repo" })
+forge_repo_workflow(name: "my-repo")
 ```
-Returns: strategy (owner/fork/contributor), default branch, PR target, hosting info.
-Resolution order: saved workflow metadata → auto-detect from git remotes → defaults.
+
+Resolution order:
+1. Repo index (if workflow previously confirmed)
+2. Vault repo-profile page (extracts hosting + workflow fields)
+3. Auto-detect from git remotes ("upstream" → fork, no upstream → owner)
+
+Returns: `{ workflow: { type, pushTo, prTarget, branchPattern, commitFormat, ... } }`
+
+To save/confirm a workflow:
+```
+forge_repo_workflow(name: "my-repo", workflow: { type: "owner", pushTo: "origin", ... })
+```
+
+**Workflow types:**
+
+| Type | Description | Push To | PR Target |
+|------|-------------|---------|-----------|
+| `owner` | Direct push to main repo | `origin` | Same repo |
+| `fork` | Push to fork, PR to upstream | `origin` (fork) | Upstream |
+| `contributor` | External contributor | `origin` | Upstream |
 
 ## Artifact System
 
-Forge manages skills, agents, and plugins as versioned artifacts.
+Forge manages skills, agents, plugins, and workspace-configs as versioned artifacts.
 
 ### Reference format
+
 ```
 type:id@version
 ```
 Examples: `skill:developer@1.0.0`, `plugin:anvil-sdlc-v2`, `agent:sdlc-implement-story@^1.0.0`
 
 ### Discovery workflow
+
 ```
 1. forge_search(query)              // Find artifacts
 2. forge_resolve(ref)               // Inspect metadata + dependencies
@@ -188,22 +241,45 @@ Examples: `skill:developer@1.0.0`, `plugin:anvil-sdlc-v2`, `agent:sdlc-implement
 ```
 
 ### Listing what's installed
+
 ```
-forge_list({ scope: "installed" })                // From lock file
-forge_list({ scope: "available", type: "skill" }) // From registry
+forge_list(scope: "installed")                // From lock file
+forge_list(scope: "available", type: "skill") // From registry
 ```
+
+### Artifact types
+
+| Type | Content File | Description |
+|------|-------------|-------------|
+| `skill` | `SKILL.md` | Opaque markdown emitted as agent instructions |
+| `agent` | `AGENT.md` | Agent definition with root skill + dependencies |
+| `plugin` | `PLUGIN.md` (optional) | Bundle of skills + agents |
+| `workspace-config` | `WORKSPACE.md` (optional) | Workspace template with MCP servers, git config |
+
+### Compilation targets
+
+Skills and plugins are compiled differently per target:
+- **claude-code**: emits to `.claude/` directory
+- **cursor**: emits to `.cursor/rules/` as `.mdc` files
 
 ## When to Use Forge vs Direct Git
 
 | Scenario | Use |
 |----------|-----|
-| Starting work on a new story/feature | Forge (`forge_develop`) |
-| Switching between work items | Forge (`forge_develop` — resumes or creates) |
+| Setting up context for AI-assisted work | Forge (`workspace_create`) |
+| Starting isolated coding on a work item | Forge (`forge_develop`) |
+| Cleaning up after work is done | Forge (`session_cleanup`, `workspace_delete`) |
 | Finding which repos exist locally | Forge (`repo_list`, `repo_resolve`) |
 | Understanding a repo's PR workflow | Forge (`repo_workflow`) |
-| Daily git operations (commit, diff, log) | Direct git inside session path |
-| Pushing a branch | Session's `.forge/scripts/push.sh` |
-| Creating a PR | Session's `.forge/scripts/create-pr.sh` |
 | Installing skills or plugins | Forge (`add` + `install`) |
-| Cleaning up finished work | Forge (`session_cleanup`) |
-| Bootstrapping a new workspace | Forge (`workspace_create`) |
+| Daily git operations (commit, push, PR) | Direct git / gh CLI |
+| Browsing available tools | Forge (`search`, `list`) |
+
+## Common Mistakes
+
+| Mistake | Correct |
+|---------|---------|
+| Thinking workspaces clone repos | Workspaces are context-only. Use `forge_develop` for code sessions. |
+| Deleting a workspace to clean up code | `workspace_delete` only removes the context folder. Use `session_cleanup` for git worktrees. |
+| Assuming storyId is required for workspace creation | storyId is optional metadata |
+| Creating a session without checking for existing ones | `forge_develop` automatically resumes existing sessions for the same workItem + repo |
