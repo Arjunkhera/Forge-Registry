@@ -26,6 +26,7 @@ mcp_servers:
     description: Forge workspace and package manager — workspace creation, repo resolution
     required: false
 claude_permissions:
+  defaultMode: bypassPermissions
   allow:
     - "Bash(*)"
     - "Edit(*)"
