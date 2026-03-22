@@ -2,58 +2,88 @@
 name: horus-anvil
 description: >
   Anvil MCP reference. Use when you need to create, read, update, search, or
-  query notes in Anvil. Covers the dynamic type system, field validation,
-  search patterns, and error recovery.
+  query notes in Anvil. Covers the dynamic type system with inheritance, field
+  validation, search patterns, view rendering, sync, and error recovery.
 ---
 
 # Horus Anvil — MCP Tool Reference
 
-Anvil is the live state system. All structured data (tasks, notes, journals, stories, etc.) lives here.
+Anvil is the live state system. All structured data (tasks, notes, journals, stories, etc.) lives here as markdown files with YAML frontmatter, indexed by an embedded SQLite database with FTS5 full-text search.
 
 ## Tools
 
 | Tool | Purpose | Key Parameters |
 |------|---------|---------------|
 | `anvil_create_note` | Create a new note | `type` (required), `title` (required), `fields` (type-specific), `content` (markdown body), `use_template` (default: true) |
-| `anvil_get_note` | Retrieve a note by ID | `noteId` (UUID) |
-| `anvil_update_note` | Update a note (PATCH) | `noteId` (required), `fields` (partial), `content` (replaces body, except journals which append) |
-| `anvil_search` | Free-text + filtered search | `query` (Typesense; FTS5 fallback), `type`, `tags` (AND), `status`, `priority`, `due` (range), `limit`, `offset` |
-| `anvil_query_view` | Structured query with rendering | `view` (required: list/table/board), `filters` (object), `orderBy`, `columns` (for table), `groupBy` (required for board), `limit`, `offset` |
-| `anvil_list_types` | List all available note types | (none) |
-| `anvil_get_related` | Get links and backlinks for a note | `noteId` (UUID) |
-| `anvil_sync_pull` | Pull latest from remote | `remote` (default: origin), `branch` |
-| `anvil_sync_push` | Commit and push changes | `message` (required) |
+| `anvil_get_note` | Retrieve a note by ID with relationships | `noteId` (UUID) |
+| `anvil_update_note` | Update a note (PATCH semantics) | `noteId` (required), `fields` (partial), `content` (replaces body; appends for journals) |
+| `anvil_search` | Free-text + filtered search | `query`, `type`, `tags` (AND), `status`, `priority`, `due`, `assignee`, `project`, `scope`, `limit`, `offset` |
+| `anvil_query_view` | Structured query with rendered output | `view` (required: list/table/board), `filters`, `orderBy`, `columns` (table), `groupBy` (required for board), `limit`, `offset` |
+| `anvil_list_types` | List all available note types with full schema | (none) |
+| `anvil_get_related` | Get forward links and backlinks for a note | `noteId` (UUID) |
+| `anvil_sync_pull` | Pull latest from remote git repo | `remote` (default: origin), `branch` |
+| `anvil_sync_push` | Stage .md + type files, commit, and push | `message` (required) |
 
 ## Type System
 
 **Always call `anvil_list_types` before creating notes.** Never guess types or field names.
 
-The type system is dynamic — the vault owner defines types. Each type has:
-- **name**: Type identifier (e.g., `task`, `note`, `journal`, `story`)
-- **parent**: Inheritance (usually `_core`)
-- **fields**: Typed field definitions
-- **template**: Default body content
+The type system is dynamic and supports single inheritance (max 3 levels deep). Every type implicitly extends `_core`.
+
+```
+_core (implicit base — noteId, type, title, created, modified, tags, related, scope)
+  ├── note       (generic note)
+  ├── task       (status, priority, due, effort, assignee, project)
+  │   └── story  (acceptance_criteria, story_points — extends task)
+  ├── journal    (append-only behavior)
+  ├── project    (project container)
+  ├── person     (contact)
+  ├── service    (external service)
+  └── meeting    (meeting record)
+```
+
+### Core Fields (on every note)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `noteId` | string | UUID, auto-generated, immutable |
+| `type` | string | Type ID, immutable |
+| `title` | string | 1-300 characters |
+| `created` | datetime | Auto-set, immutable |
+| `modified` | datetime | Auto-updated on every change |
+| `tags` | tags | String array, no duplicates |
+| `related` | reference_list | Wiki-links `[[Note Title]]` |
+| `scope` | object | `{ context: personal|work, team, service }` |
 
 ### Field Types
 
-| Type | Description | Example |
-|------|-------------|---------|
-| `string` | Free text | `title`, `description` |
-| `enum` | One of fixed values | `status: [draft, ready, done]` |
-| `boolean` | True/false | `is_archived` |
-| `number` | Numeric value | `story_points` |
-| `date` | ISO date string | `due_date` |
-| `datetime` | ISO datetime | `created_at` |
-| `reference` | UUID link to another note | `project`, `parent` |
-| `tags` | Array of strings | `tags: [frontend, urgent]` |
-| `array` | Array of values | `assignees` |
-| `object` | Nested object | `metadata` |
-| `markdown` | Markdown content | `body` |
-| `url` | URL string | `link` |
+| Type | Description | Constraints |
+|------|-------------|-------------|
+| `string` | Free text | `min_length`, `max_length`, `pattern` |
+| `text` | Long text | `min_length`, `max_length` |
+| `url` | URL string | — |
+| `enum` | One of fixed values | `values[]` (required) |
+| `date` | ISO date string | — |
+| `datetime` | ISO datetime | — |
+| `number` | Numeric value | `min`, `max`, `integer` |
+| `boolean` | True/false | — |
+| `tags` | Array of strings | `no_duplicates` |
+| `reference` | Link to a note | `ref_type` (target type constraint) |
+| `reference_list` | Multiple links | — |
+| `object` | Nested fields | Sub-field definitions |
+
+### Field Behaviors
+
+| Behavior | Description |
+|----------|-------------|
+| `required` | Must be set on creation |
+| `immutable` | Cannot change after creation (`noteId`, `created` always immutable) |
+| `auto` | Auto-populate: `uuid` (generate) or `now` (current timestamp) |
+| `default` | Default value if not provided |
 
 ## Creating Notes
 
-1. Call `anvil_list_types` to discover available types
+1. Call `anvil_list_types` to discover available types and their fields
 2. Pick the correct type based on what the user wants to create
 3. Call `anvil_create_note` with:
    - `type`: The type ID from step 1
@@ -66,8 +96,9 @@ The type system is dynamic — the vault owner defines types. Each type has:
 
 ## Searching Notes
 
-### `anvil_search` — Free-text + filters (Typesense)
-Best for: finding notes by keyword, filtering by type/status/tags. Uses Typesense as primary search engine with FTS5 as emergency fallback.
+### `anvil_search` — Free-text + filters
+
+Best for: finding notes by keyword, filtering by type/status/tags. Uses SQLite FTS5 with BM25 ranking + recency boost.
 
 ```json
 {
@@ -79,11 +110,17 @@ Best for: finding notes by keyword, filtering by type/status/tags. Uses Typesens
 }
 ```
 
-Tags use AND semantics — a note must have ALL specified tags to match.
+**All parameters are flat top-level fields**, not nested in a `filters` object. Tags use AND semantics — a note must have ALL specified tags.
 
 **For an unfiltered search, omit `query` entirely** — passing `"*"` is invalid FTS5 syntax and will error.
 
+**Three search modes:**
+- Query + Filters: FTS candidates → structured filter → recency boost
+- Query only: FTS with BM25 ranking
+- Filters only: Structured query (no free-text)
+
 ### `anvil_query_view` — Structured views
+
 Best for: dashboards, kanban boards, sorted lists, tabular reports.
 
 **`view` is required.** Use `filters` (not `filter`) for criteria. Use `orderBy` (not `sort`) for sorting.
@@ -117,6 +154,8 @@ Best for: dashboards, kanban boards, sorted lists, tabular reports.
 }
 ```
 
+Board creates a column for each enum value of the groupBy field. Auto-detects columns by type if not specified.
+
 ## Updating Notes
 
 Updates use **PATCH semantics** — only send fields you want to change:
@@ -129,9 +168,41 @@ Updates use **PATCH semantics** — only send fields you want to change:
 ```
 
 - Omitted fields are preserved
+- `modified` timestamp always updated automatically
 - `content` replaces the body for most types
 - **Journals are append-only** — `content` is appended, not replaced
-- Some fields may be immutable (e.g., `type`, `created_at`)
+- Immutable fields (`noteId`, `created`, `type`) cannot be changed
+
+## Relationships
+
+Notes link to each other through:
+- **`related` field**: Explicit wiki-links `[[Note Title]]`
+- **Body wiki-links**: `[[mentions]]` extracted from markdown body (skipping code blocks)
+- **Typed reference fields**: e.g., `assignee` → person, `project` → project
+
+Use `anvil_get_related` to discover:
+- **Forward links**: References this note makes (grouped by relation type)
+- **Reverse links / backlinks**: Notes that reference this one
+
+Forward references can be unresolved (target doesn't exist yet) — they resolve automatically when the target note is created.
+
+## Sync
+
+### anvil_sync_pull
+Fetches from remote and merges. Prefers fast-forward; falls back to regular merge. Detects conflict markers (`<<<<<<<`) in changed files.
+
+### anvil_sync_push
+**Selective staging:** Only stages `.md` files and `.anvil/types/*.yaml`. Never stages `.anvil/.local/` (local SQLite index, runtime state). This prevents syncing machine-specific data.
+
+## Storage Details
+
+- **Location**: `~/Horus/horus-data/notes/`
+- **File format**: Markdown with YAML frontmatter
+- **Organization**: Flat or by-type subdirectories
+- **Slugification**: `"Fix Auth Bug"` → `fix-auth-bug.md` (collision: `-1`, `-2`)
+- **Atomic writes**: Write to `.tmp`, rename to final path
+- **Index**: SQLite at `.anvil/.local/index.db`, rebuilt from files on startup
+- **Type definitions**: `.anvil/types/*.yaml`, hot-reloaded on change
 
 ## Error Recovery
 
@@ -139,13 +210,11 @@ Updates use **PATCH semantics** — only send fields you want to change:
 |-------|-------|-----|
 | `TYPE_NOT_FOUND` | Used a type that doesn't exist | Call `anvil_list_types` and use a valid type |
 | `VALIDATION_ERROR` | Invalid field name or value | Check the type's field definitions from `anvil_list_types` |
-| `NOTE_NOT_FOUND` | Invalid noteId | Verify the UUID via `anvil_search` |
-| `APPEND_ONLY` | Tried to replace journal body | Use append semantics — content is added to existing body |
+| `NOT_FOUND` | Invalid noteId | Verify the UUID via `anvil_search` |
+| `APPEND_ONLY` | Tried to replace journal body | Content is appended for journal types |
 | `IMMUTABLE_FIELD` | Tried to change a read-only field | Remove that field from the update payload |
-
-## Relationships
-
-Use `anvil_get_related` to discover forward links (references this note makes) and backlinks (notes that reference this one). Useful for navigating project → stories → tasks hierarchies.
+| `CONFLICT` | Merge conflict on sync pull | Resolve conflict markers manually |
+| `SYNC_ERROR` | Git operation failed | Check remote connectivity |
 
 ## Known Gotchas
 
@@ -156,4 +225,5 @@ These mistakes have been observed in practice — avoid them:
 | 1 | Guessing status values (e.g., `draft`, `ready`, `in_progress`) | **Always call `anvil_list_types` first.** Status enums are type-specific. Tasks/stories use `open`, `in-progress`, `blocked`, `done`. |
 | 2 | Passing `query: "*"` for an unfiltered search | **Omit `query` entirely.** FTS5 rejects bare `*` — leaving the field out returns all notes matching other filters. |
 | 3 | Passing `filters: { status: "..." }` as a nested object to `anvil_search` | **`anvil_search` takes flat top-level params** (`status`, `type`, `priority`, `tags`). Only `anvil_query_view` uses a nested `filters` object. |
-| 4 | Using `format`, `filter`, or `sort` with `anvil_query_view` | **The correct field names are `view` (required), `filters`, and `orderBy`.** The old names were stale schema — they will cause a validation error. |
+| 4 | Using `format`, `filter`, or `sort` with `anvil_query_view` | **The correct field names are `view` (required), `filters`, and `orderBy`.** |
+| 5 | Passing `content` to update a journal expecting replacement | **Journals are append-only.** New content is appended to the existing body, never replaced. |

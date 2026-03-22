@@ -3,12 +3,13 @@ name: horus-vault
 description: >
   Vault MCP reference. Use when you need to read or write knowledge pages —
   repo profiles, guides, procedures, concepts, and learnings. Covers the
-  read path, write path pipeline, page types, and schema management.
+  read path, write path pipeline, page types, scope resolution, schema
+  management, and multi-vault routing.
 ---
 
 # Horus Vault — MCP Tool Reference
 
-Vault is the knowledge base. It stores long-lived, structured documentation about codebases, conventions, procedures, and decisions.
+Vault is the knowledge base. It stores long-lived, structured documentation about codebases, conventions, procedures, and decisions. It has a two-tier architecture: a Python REST API (FastAPI) for search and knowledge logic, and a thin TypeScript MCP adapter that translates MCP calls to HTTP requests.
 
 ## Multi-Vault Architecture
 
@@ -21,17 +22,17 @@ Horus supports multiple vault instances (e.g., `personal` and `work`). All tools
 
 | Tool | Purpose | Key Parameters |
 |------|---------|---------------|
-| `knowledge_resolve_context` | Get all applicable pages for a repo | `repo` (required), `include_full` (default: false), `vault` (optional) |
-| `knowledge_search` | Hybrid search (keyword + semantic + reranking) | `query` (required), `scope` ({program, repo}), `type`, `mode`, `limit`, `vault` (optional) |
-| `knowledge_get_page` | Read a page by UUID | `id` (UUID, required), `vault` (optional) |
-| `knowledge_get_related` | Follow links from a page | `id` (UUID, required), `vault` (optional) |
-| `knowledge_list_by_scope` | Browse pages for a program/repo | `scope` ({program, repo}), `type`, `mode`, `tags`, `limit`, `vault` (optional) |
-| `knowledge_validate_page` | Validate page against schema | `content` (full markdown with YAML frontmatter), `vault` (optional) |
-| `knowledge_suggest_metadata` | Auto-suggest frontmatter fields | `content` (markdown), `hints` (optional), `vault` (optional) |
-| `knowledge_check_duplicates` | Check overlap with existing pages | `title`, `content`, `threshold` (0-1, default: 0.75), `vault` (optional) |
-| `knowledge_get_schema` | Get full schema + registry contents | `vault` (optional — defaults to default vault) |
-| `knowledge_registry_add` | Add tag/repo/program to a registry | `registry` (tags/repos/programs), `entry` ({id, description?, aliases?}), `vault` (optional) |
-| `knowledge_write_page` | Write page, commit to branch, open PR | `path` (required), `content` (required), `pr_title`, `pr_body`, `commit_message`, `vault` (optional) |
+| `knowledge_resolve_context` | Get all applicable pages for a repo | `repo` (required), `include_full` (default: false), `vault` |
+| `knowledge_search` | Hybrid search (keyword + semantic + reranking) | `query` (required), `scope` ({program, repo}), `type`, `mode`, `limit`, `vault` |
+| `knowledge_get_page` | Read a full page by ID | `id` (required), `vault` |
+| `knowledge_get_related` | Follow links from a page | `id` (required), `vault` |
+| `knowledge_list_by_scope` | Browse pages by scope, mode, type, tags | `scope` ({program, repo}), `type`, `mode`, `tags`, `limit`, `vault` |
+| `knowledge_validate_page` | Validate page against schema + registries | `content` (full markdown with frontmatter), `vault` |
+| `knowledge_suggest_metadata` | Auto-suggest frontmatter fields | `content` (markdown), `hints`, `vault` |
+| `knowledge_check_duplicates` | Check overlap with existing pages | `title`, `content`, `threshold` (0-1, default: 0.75), `vault` |
+| `knowledge_get_schema` | Get schema definition + registry contents | `vault` (defaults to default vault) |
+| `knowledge_write_page` | Write page via git (branch → commit → PR) | `path` (required), `content` (required), `pr_title`, `pr_body`, `commit_message`, `vault` |
+| `knowledge_registry_add` | Add entry to a registry | `registry` (tags/repos/programs), `entry` ({id, description?, aliases?}), `vault` |
 
 ### The `vault` parameter
 
@@ -40,7 +41,77 @@ All tools accept an optional `vault` string (e.g., `"personal"`, `"work"`):
 - **Omitted on read tools** → fan-out: results merged from all vaults, each result tagged with `source_vault`
 - **Specified on read tools** → restrict to that vault only
 - **Omitted on write/routed tools** → UUID registry lookup (for existing pages) or default vault (for new pages)
-- **Specified on write/routed tools** → route directly to that vault, bypassing UUID lookup
+- **Specified on write/routed tools** → route directly to that vault
+
+## Page Types
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| `repo-profile` | Describes a repository — tech stack, conventions, test commands | `repos/anvil.md` |
+| `guide` | How-to guide for a specific workflow | `guides/onboarding.md` |
+| `procedure` | Step-by-step operational procedure | `procedures/deploy.md` |
+| `concept` | Explains an architectural concept or pattern | `concepts/event-sourcing.md` |
+| `keystone` | Program-level overview and architecture | `programs/horus.md` |
+| `learning` | Captured learnings, post-mortems, discoveries | `learnings/caching-gotcha.md` |
+
+## Page Modes
+
+| Mode | Description | Typical Types |
+|------|-------------|---------------|
+| `reference` | Long-lived reference material | concepts, repo-profiles |
+| `operational` | Active procedures and guides used during work | guides, procedures |
+| `keystone` | Top-level architectural overviews | keystone |
+
+## Scope System
+
+Pages are scoped at two levels: **program** and **repo**.
+
+```
+Program Level (e.g., program: horus)
+  └── Repo Level (e.g., repo: anvil)
+```
+
+When resolving context for a repo:
+1. Find the repo-profile page
+2. Extract the program from scope
+3. Collect all operational pages:
+   - **Specificity 2** (repo-level): `scope.repo` matches OR `applies_to` references the repo
+   - **Specificity 1** (program-level): `scope.program` matches
+4. Return sorted by specificity (repo-level first)
+
+**Cross-repo references:** The `applies-to` field lets a page reference multiple repos without duplicating content.
+
+## Page Frontmatter
+
+```yaml
+---
+title: Deployment Guide                    # Required, max 120 chars
+type: guide                                 # Required (one of the 6 types)
+mode: operational                           # Required (reference/operational/keystone)
+scope:
+  program: horus                            # Program scope
+  repo: anvil                               # Repo scope (optional)
+tags: [deployment, ci-cd]                   # From registry, min 1
+owner: platform-team                        # Recommended
+last-verified: "2026-03-01"                 # Recommended
+description: "Step-by-step deploy guide"    # Recommended
+related: [guides/rollback.md]               # Relationship: general
+depends-on: ["services/api.md"]             # Relationship: dependency
+consumed-by: ["services/monitoring.md"]     # Relationship: consumer
+applies-to: [anvil, forge]                  # Cross-repo reference
+---
+```
+
+## Relationships
+
+| Field | Direction | Description |
+|-------|-----------|-------------|
+| `related` | Bidirectional | General relationship |
+| `depends-on` | This page depends on... | Dependency chain |
+| `consumed-by` | This page is consumed by... | Consumer tracking |
+| `applies-to` | This page applies to repos... | Cross-repo scope |
+
+Formats: wiki-links (`[[Page Title]]`), dict refs (`{"repo": "name"}`), or plain strings.
 
 ## Read Path
 
@@ -74,24 +145,8 @@ knowledge_get_related(id) → follow links (related, depends-on, consumed-by, ap
 knowledge_search(query, vault: "work")
 ```
 
-## Page Types
-
-| Type | Purpose | Example |
-|------|---------|---------|
-| `repo-profile` | Describes a repository — tech stack, conventions, test commands | `repos/anvil.md` |
-| `concept` | Explains an architectural concept or pattern | `concepts/event-sourcing.md` |
-| `guide` | How-to guide for a specific workflow | `guides/onboarding.md` |
-| `procedure` | Step-by-step operational procedure | `procedures/deploy.md` |
-| `keystone` | Program-level overview and architecture | `programs/horus.md` |
-| `learning` | Captured learnings, post-mortems, discoveries | `learnings/caching-gotcha.md` |
-
-## Page Modes
-
-| Mode | Description |
-|------|-------------|
-| `reference` | Long-lived reference material (concepts, repo profiles) |
-| `operational` | Active procedures and guides used during work |
-| `keystone` | Top-level architectural overviews |
+### Progressive disclosure
+Search results return **PageSummary** (description only). Use `knowledge_get_page` for **PageFull** (with body + relationships). Use `include_full: true` on `resolve_context` to get full pages in one call.
 
 ## Write Path Pipeline
 
@@ -103,19 +158,19 @@ knowledge_check_duplicates(title, content, threshold?)
 ```
 - Score >= threshold → novel content, safe to create new page
 - Score < threshold → overlap exists, merge into existing page instead
-- Add `vault=` to check within a specific vault only
 
 ### 2. Suggest metadata
 ```
 knowledge_suggest_metadata(content, hints?)
 ```
-Returns per-field suggestions with confidence. Use to build frontmatter.
+Returns per-field suggestions with confidence levels (high/medium/low/none). Analysis includes: type signals, mode signals, keyword extraction, registry fuzzy matching, repo mention extraction.
 
 ### 3. Validate
 ```
 knowledge_validate_page(content)
 ```
 - Pass full markdown with YAML frontmatter
+- Validates: type, required fields, field constraints, registry values, mode, scope
 - Returns structured errors with fuzzy-match suggestions for invalid values
 - Fix any errors before writing
 
@@ -125,7 +180,7 @@ knowledge_write_page(path, content, pr_title?, pr_body?, commit_message?, vault?
 ```
 - Creates a new branch, commits the page, and opens a GitHub PR
 - Returns the PR URL for human review
-- Omit `vault=` to write to default vault; specify to target a specific vault
+- Requires `GITHUB_TOKEN` and `GITHUB_REPO` configuration
 
 ## Schema and Registries
 
@@ -133,8 +188,7 @@ knowledge_write_page(path, content, pr_title?, pr_body?, commit_message?, vault?
 ```
 knowledge_get_schema(vault?)
 ```
-Returns all page types, valid field values, and registry contents (tags, repos, programs).
-Defaults to the default vault's schema (schemas are assumed uniform across vaults).
+Returns all page types, field constraints, and registry contents (tags, repos, programs). Defaults to default vault's schema.
 
 ### Add to a registry
 If validation rejects a value that should exist:
@@ -149,12 +203,12 @@ knowledge_registry_add(registry: "tags"|"repos"|"programs", entry: {id, descript
 knowledge_resolve_context(repo: "my-repo", include_full: true)
 ```
 
-**Creating a new learning page after discovering something:**
+**Creating a new learning page after a discovery:**
 ```
 1. knowledge_check_duplicates(title, content)
-2. knowledge_suggest_metadata(content)
+2. knowledge_suggest_metadata(content, hints: {"scope.program": "horus"})
 3. knowledge_validate_page(full_page)
-4. knowledge_write_page(path, full_page)
+4. knowledge_write_page(path, full_page, pr_title: "Add learning: ...")
 ```
 
 **Understanding a program's architecture:**
@@ -162,7 +216,7 @@ knowledge_resolve_context(repo: "my-repo", include_full: true)
 knowledge_search(query: "architecture", scope: {program: "horus"}, type: "keystone")
 ```
 
-**Writing to a specific vault explicitly:**
+**Writing to a specific vault:**
 ```
 knowledge_write_page(path, content, vault: "work")
 ```
@@ -171,3 +225,16 @@ knowledge_write_page(path, content, vault: "work")
 ```
 knowledge_search(query: "auth conventions", vault: "personal")
 ```
+
+## Error Codes
+
+| Code | HTTP | Cause | Fix |
+|------|------|-------|-----|
+| `VALIDATION_FAILED` | 400 | Schema/registry validation | Fix errors in frontmatter, check registries |
+| `PARSE_ERROR` | 400 | YAML frontmatter parsing | Fix YAML syntax |
+| `PAGE_NOT_FOUND` | 404 | Page ID doesn't exist | Check the path/ID |
+| `REGISTRY_NOT_FOUND` | 404 | Invalid registry name | Use: tags, repos, or programs |
+| `DUPLICATE_ENTRY` | 409 | Registry entry already exists | Entry already registered |
+| `SCHEMA_NOT_LOADED` | 503 | Schema not loaded yet | Wait for service startup |
+| `GIT_ERROR` | 500 | Git operation failure | Check git repo state |
+| `GITHUB_API_ERROR` | 500 | GitHub API call failure | Check GITHUB_TOKEN |
