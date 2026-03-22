@@ -12,7 +12,8 @@ description: >
   (work item spec, plan, project). It follows the plan→approve→implement flow and logs all
   deviations to the work item's scratch journal.
 
-  Deterministic git operations (branching, committing) are handled by bundled scripts in scripts/.
+  Deterministic git operations (branching, committing) are handled by scripts bundled inside the
+  session path returned by forge_develop.
 ---
 
 # Developer Skill
@@ -30,18 +31,19 @@ You are the implementation engine. You pick up work items, understand their requ
 | `knowledge_resolve_context` | Load repo profiles, architecture, conventions, build commands |
 | `forge_workspace_create` | Create managed workspace (plugins, MCP configs, env vars) |
 | `forge_workspace_list` | Check for existing workspaces |
-| `forge_repo_clone` | Create an isolated reference clone of a repo on its own branch |
+| `forge_develop` | Create or resume an isolated code session (git worktree) for a repo + work item |
 | `forge_repo_list` | Discover repos in the local index |
 
-## Scripts (D15)
+## Scripts (in session path)
 
-Deterministic git operations live in `scripts/`:
+When `forge_develop` creates or resumes a session, it installs enforcement scripts into the session's `.forge/scripts/` directory. Always use these — they read workflow metadata automatically and do the right thing for every workflow type (owner, fork, contributor).
 
-| Script | Purpose | Key Env Vars |
-|--------|---------|-------------|
-| `branch-start.sh` | Stash + checkout base + create feature branch | `SDLC_BRANCH_PATTERN`, `SDLC_BASE_BRANCH`, `SDLC_STASH_BEFORE_CHECKOUT` |
-| `commit.sh` | Format and create conventional commit | `SDLC_COMMIT_FORMAT` |
-| `branch-finish.sh` | Push branch to remote, cleanup | `SDLC_BASE_BRANCH` |
+| Script | Purpose |
+|--------|---------|
+| `.forge/scripts/push.sh` | Push current branch to the correct remote for this repo's workflow |
+| `.forge/scripts/create-pr.sh` | Create a PR against the correct target (handles fork vs owner vs contributor) |
+
+Legacy scripts (`branch-start.sh`, `commit.sh`, `branch-finish.sh`) in the skill's own `scripts/` directory remain available for workspace-level operations. For repo-level git operations, prefer the session scripts above.
 
 **The SKILL.md decides WHEN to call scripts. Scripts handle the mechanical execution.**
 
@@ -100,7 +102,7 @@ On rejection or modification:
 - Revise plan and re-present
 - Log revision in journal
 
-### Phase 4: Bootstrap Workspace and Get Repo Clones
+### Phase 4: Bootstrap Workspace and Start Code Session
 
 **Workspace bootstrap (once per work item):**
 
@@ -111,28 +113,43 @@ If a workspace exists (resume):
 1. Check state via `forge_workspace_list`
 2. Reuse existing workspace
 
-**Getting an isolated working copy (every time you need to touch a repo):**
+**Starting a code session (every time you need to touch a repo):**
 
-Repo cloning is independent of workspace creation. Whenever you need to make code changes to a repo:
+Code sessions are isolated git worktrees created on-demand. Whenever you need to make code changes to a repo:
 
 1. Call `forge_repo_list` to verify the repo exists in the index
-2. Call `forge_repo_clone` with:
-   - `repoName`: the repo name from the index
-   - `branchName`: your feature branch name (use the same branch pattern as `$SDLC_BRANCH_PATTERN`)
-3. **All code changes go into `clonePath` (or `hostClonePath` for display)**. Never write directly to the repo's `localPath`.
-4. Run `scripts/branch-start.sh` inside the clone path
+2. Call `forge_develop` with:
+   - `repo`: the repo name from the index
+   - `workItem`: the work item ID (e.g. `"9faec02d"` or the full UUID)
+3. **Handle the response:**
+   - `status: "created"` or `status: "resumed"` → session ready, use `sessionPath` for all code changes
+   - `status: "needs_workflow_confirmation"` → see workflow confirmation flow below
+4. **All code changes go into `sessionPath`**. Never write directly to the repo's source path.
 
-This applies whether you identify the repo at workspace creation time or mid-conversation. If you discover you need to work on a new repo during implementation, call `forge_repo_clone` at that point — do not create a new workspace.
+**Workflow confirmation flow:**
+
+When `forge_develop` returns `status: "needs_workflow_confirmation"`:
+1. The response includes a `detected` object with auto-detected workflow values (type, upstream, fork remote, etc.)
+2. Present the detected values to the user: "No workflow is saved for `{repo}`. Detected: `{type}` workflow. Is this correct?"
+3. On user confirmation (or correction), re-call `forge_develop` with the same `repo` + `workItem` plus a `workflow` parameter:
+   ```
+   forge_develop({ repo: "my-repo", workItem: "WI-42",
+                   workflow: { type: "fork", upstream: "git@github.com:org/repo.git" } })
+   ```
+4. This second call saves the workflow and creates the session in one shot — response will be `status: "created"`.
+5. Subsequent calls for the same repo need no `workflow` parameter.
+
+This is a one-time cost per repo. All future work items on the same repo skip this step.
 
 ### Phase 5: Implement Step by Step (Flow 5)
 
 For each plan step:
 
-1. **Implement the changes** following conventions from Vault
+1. **Implement the changes** in `sessionPath` following conventions from Vault
 2. **Update plan progress** via `anvil_update_note`:
    - Current step: ✅ done → 🔄 in progress → ⬜ pending
-3. **Commit** via `scripts/commit.sh`:
-   - Conventional commit format from `$SDLC_COMMIT_FORMAT`
+3. **Commit** using conventional commit format (from `$SDLC_COMMIT_FORMAT`):
+   - Run `git commit` directly inside the session path
    - One commit per logical change
 4. **Log any deviations** in work item journal via `anvil_create_note` (journal type) with `#deviation` tag
 
@@ -142,7 +159,7 @@ Before transitioning to `in_review`:
 
 1. Check implementation against each acceptance criterion
 2. Verify all plan steps completed
-3. Run linter if `$SDLC_LINT_CMD` is set
+3. Run linter if available (check Vault repo profile for `lint` command)
 4. Assess documentation impact:
    - New module/API → note for docs skill
    - New pattern → note for agent config update
@@ -190,7 +207,7 @@ Before transitioning to `in_review`:
 
 ### Flow 11: Multi-Repo
 - Project declares multiple repos
-- Forge creates workspace with worktrees for all
+- Call `forge_develop` once per repo needed
 - Plan identifies which changes go where
 - Separate branches and commits per repo
 - Cross-linked PRs

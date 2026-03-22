@@ -1,11 +1,15 @@
 id: sdlc-default
 name: SDLC v2 Default Workspace
-version: 1.0.0
+version: 1.2.0
 description: >
   Default workspace configuration for the Horus SDLC v2 workflow. Provides a complete software
   development lifecycle with 9 skills, 6 subagents, and skill scripts for planning, implementing,
   testing, reviewing, documenting, and shipping software. All SDLC state lives in Anvil as typed
   notes; architecture knowledge comes from Vault; workspaces are managed by Forge.
+
+  Workspace is context-only — it installs skills, MCP configs, CLAUDE.md, and environment
+  variables. It does not clone repos. Use forge_develop to start an isolated code session
+  (git worktree) when you need to make code changes.
 type: workspace-config
 author: Arjun Khera
 license: MIT
@@ -31,7 +35,7 @@ mcp_servers:
     description: "Vault knowledge service — architecture docs, repo profiles, conventions. Optional but recommended for full context."
     required: false
   forge:
-    description: "Forge workspace and package manager — workspace creation, repo resolution, skill discovery. Optional but recommended."
+    description: "Forge execution layer — workspace management, repo index, code sessions (forge_develop), session lifecycle. Optional but recommended."
     required: false
 
 # Workspace settings
@@ -40,7 +44,7 @@ settings:
   naming_convention: "{subtype}/{id}-{slug}"
   auto_archive_on_done: false
 
-# Git workflow configuration — Forge emits these as env vars for skill scripts
+# Git workflow configuration — emitted as env vars for skill scripts and session enforcement
 git_workflow:
   branch_pattern: "{subtype}/{id}-{slug}"
   base_branch: main
@@ -55,9 +59,9 @@ env:
   SDLC_BASE_BRANCH: main
   SDLC_STASH_BEFORE_CHECKOUT: "true"
   SDLC_COMMIT_FORMAT: conventional
-  # These are resolved per-repo from Vault repo profiles at workspace creation:
-  # SDLC_TEST_CMD: (from Vault repo profile, e.g. "npm test", "pytest -x")
-  # SDLC_LINT_CMD: (from Vault repo profile, e.g. "npm run lint", "ruff check .")
+  # These are resolved per-repo from Vault repo profiles at session creation:
+  # SDLC_TEST_CMD: (from Vault repo profile, e.g. "pnpm test", "pytest -x")
+  # SDLC_LINT_CMD: (from Vault repo profile, e.g. "pnpm run lint", "ruff check .")
   # SDLC_PR_TEMPLATE: (from Vault repo profile, e.g. ".github/pull_request_template.md")
 
 # Rules emitted into the workspace

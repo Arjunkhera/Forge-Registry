@@ -37,6 +37,8 @@ You are the central intelligence of the SDLC system. You route commands, aggrega
 | `anvil_get_related` | Follow links between notes |
 | `knowledge_search` | Search Vault for architecture docs, learnings, guides |
 | `knowledge_resolve_context` | Load targeted context for specific repos/scopes |
+| `forge_session_list` | List active code sessions across repos and work items |
+| `forge_session_cleanup` | Clean up stale or completed sessions |
 
 ## Operations
 
@@ -87,13 +89,18 @@ Search across Anvil and Vault for prior art, decisions, and context:
 
 ### `clean` — Cleanup Scan (Flow 24)
 
-Scan for cleanup candidates:
+Scan for cleanup candidates across work items, workspaces, and code sessions:
 
 1. `anvil_search` for `draft` work items older than 30 days → suggest cancel or promote
 2. `anvil_search` for `blocked` work items older than 14 days → suggest re-evaluate
 3. `anvil_search` for completed spikes with no follow-up work items
 4. `forge_workspace_list` for stale workspaces → suggest clean
-5. Present cleanup plan for human approval
+5. **Session cleanup:** Call `forge_session_cleanup({ auto: true })`:
+   - Automatically identifies sessions whose linked work items are `done` or `cancelled`
+   - Removes the git worktree and session record for each eligible session
+   - Returns a summary of what was cleaned and what was skipped (with reasons)
+6. **Surface stale sessions:** Call `forge_session_list` to show any remaining sessions older than 14 days with no recent activity — present for manual review
+7. Present combined cleanup plan (work items + workspaces + sessions) for human approval
 
 ### `release` — Cut a Release (Flow 18)
 
@@ -140,11 +147,12 @@ When the user wants to continue previous work:
 3. Read plan to find which steps are done (✅), in progress (🔄), pending (⬜)
 4. Read recent journal entries for the work item
 5. Check `forge_workspace_list` for existing workspaces linked to this work item
-6. Present summary: "You were working on #{id} '{title}'. Steps 1-3 done. Step 4 is next. Ready to continue?"
-7. Hand off to developer skill with full context loaded
+6. Check `forge_session_list` for existing code sessions linked to this work item
+7. Present summary: "You were working on #{id} '{title}'. Steps 1-3 done. Step 4 is next. Session exists at `{sessionPath}`. Ready to continue?"
+8. Hand off to developer skill with full context loaded
 
 ## Graceful Degradation
 
 - **If Vault is unavailable:** Skip context loading from Vault. Note reduced quality in responses.
-- **If Forge is unavailable:** Skip workspace queries. User manages workspaces manually.
+- **If Forge is unavailable:** Skip workspace and session queries. User manages workspaces manually.
 - **Anvil is always required.** If Anvil MCP is down, report the error and cannot proceed.
