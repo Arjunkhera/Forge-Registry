@@ -22,6 +22,11 @@ plugins:
 # Individual skills (if any standalone skills beyond the plugin)
 skills: []
 
+# Personas — role identity artifacts injected into workspace CLAUDE.md at creation time.
+# Each entry is a persona id from the registry/personas/ directory.
+# Forge resolves, installs, and appends persona content to the workspace system prompt.
+personas: []
+
 # MCP server connections — URLs resolved from ~/.forge/config.yaml at creation time
 mcp_servers:
   anvil:
