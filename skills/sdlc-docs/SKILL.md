@@ -39,9 +39,20 @@ You maintain the living documentation for the SDLC system. Documentation is not 
 
 This is the primary entry point for bootstrapping Vault content for a repo.
 
-1. **Query Vault** via `knowledge_resolve_context` for the repo. Get existing repo profile, architecture docs, guides.
+#### Step 1: Load Context (via sdlc-gather-context)
 
-2. **If Vault docs exist:** Present existing knowledge. Identify gaps or stale content (last-verified date old, key modules not covered). Offer to refresh.
+Delegate all context loading to the `sdlc-gather-context` subagent. Do not load context inline.
+
+Invoke with:
+```
+caller: sdlc-docs/explore
+needs:
+  - vault: existing repo profile + architecture docs for repo
+```
+
+Wait for the synthesized briefing before proceeding. Use only the briefing — do not perform additional Vault or Anvil reads for context that should have been in the briefing.
+
+1. **If Vault docs exist:** Present existing knowledge. Identify gaps or stale content (last-verified date old, key modules not covered). Offer to refresh.
 
 3. **If no Vault docs exist (or gaps identified):** Explore the codebase directly — file structure, README, key modules, entry points, data flow, conventions.
 
@@ -89,8 +100,21 @@ Change status or add consequences discovered after implementation. Always append
 
 Scan for documentation gaps after a batch of work items reaches `done`:
 
-1. **Query recently completed work items** via `anvil_search`
-2. **For each, check:**
+#### Step 1: Load Context (via sdlc-gather-context)
+
+Delegate all context loading to the `sdlc-gather-context` subagent. Do not load context inline.
+
+Invoke with:
+```
+caller: sdlc-docs/audit
+needs:
+  - anvil: recently completed work items (status=done)
+  - vault: repo profiles (staleness check)
+```
+
+Wait for the synthesized briefing before proceeding. Use only the briefing — do not perform additional Vault or Anvil reads for context that should have been in the briefing.
+
+1. **For each completed work item, check:**
    - Architecture changes without ADR?
    - New modules/APIs without documentation?
    - Vault repo profiles stale (work item changed repo structure)?
@@ -115,7 +139,22 @@ Generic Vault ingestion for any knowledge type:
 
 ### `story-completion-hook` — Post-Completion Doc Check
 
-When a work item transitions to `done`, check:
+When a work item transitions to `done`:
+
+#### Step 1: Load Context (via sdlc-gather-context)
+
+Delegate all context loading to the `sdlc-gather-context` subagent. Do not load context inline.
+
+Invoke with:
+```
+caller: sdlc-docs/story-completion-hook
+needs:
+  - anvil: work item note (changes, deviations)
+```
+
+Wait for the synthesized briefing before proceeding. Use only the briefing — do not perform additional Vault or Anvil reads for context that should have been in the briefing.
+
+Check:
 
 1. **Did it introduce an architectural decision?** → Suggest ADR if none exists
 2. **Did it change APIs or interfaces?** → Update API docs
