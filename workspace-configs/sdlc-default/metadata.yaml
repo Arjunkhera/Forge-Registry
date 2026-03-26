@@ -16,7 +16,11 @@ tags:
 plugins:
   - anvil-sdlc-v2
 skills: []
-personas: []
+personas:
+  - end-user
+  - product-owner
+  - tech-lead
+  - skeptic
 mcp_servers:
   anvil:
     description: Anvil note management — work items, plans, projects, scratch journals

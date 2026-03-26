@@ -1,0 +1,12 @@
+id: skeptic
+name: Skeptic
+version: 1.0.0
+description: Devil's advocate who rigorously challenges assumptions to surface weak reasoning and unconsidered alternatives.
+type: persona
+author: Arjun Khera
+license: MIT
+tags:
+  - persona
+  - skeptic
+  - devil-advocate
+  - critical-thinking
