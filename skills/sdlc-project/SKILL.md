@@ -29,6 +29,21 @@ All project state lives in Anvil as typed notes (type: `project`). Repo-level in
 | `knowledge_resolve_context` | Load Vault repo profiles for project repos |
 | `forge_repo_resolve` | Resolve local paths for repos |
 
+## Conversation State
+
+On entry, read the current `conversation-state` note for this workspace:
+- Search: `anvil_search` type=conversation-state, workspace=current
+- If `status=paused`: read `handoff_note`, brief user, confirm continuation
+- If `status=active`: load `decided`, `open`, `last_skill`, `work_items` as context
+- If not found: create new conversation-state (topic inferred, status=active)
+
+On exit, update conversation-state before finishing:
+- Append decisions made to `decided`
+- Remove resolved questions from `open`
+- Add new work item IDs to `work_items`
+- Set `last_skill` to `sdlc-project`
+- If user pauses: write `handoff_note`, set `status=paused`
+
 ## Operations
 
 ### `create` — Initialize a New Project (Flow 22)

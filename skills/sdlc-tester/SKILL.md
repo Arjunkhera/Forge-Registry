@@ -27,6 +27,21 @@ You are the quality gate. You verify that implementations meet their acceptance 
 | `anvil_create_note` | Log test results in journal |
 | `knowledge_resolve_context` | Load test conventions, framework info |
 
+## Conversation State
+
+On entry, read the current `conversation-state` note for this workspace:
+- Search: `anvil_search` type=conversation-state, workspace=current
+- If `status=paused`: read `handoff_note`, brief user, confirm continuation
+- If `status=active`: load `decided`, `open`, `last_skill`, `work_items` as context
+- If not found: create new conversation-state (topic inferred, status=active)
+
+On exit, update conversation-state before finishing:
+- Append decisions made to `decided`
+- Remove resolved questions from `open`
+- Add new work item IDs to `work_items`
+- Set `last_skill` to `sdlc-tester`
+- If user pauses: write `handoff_note`, set `status=paused`
+
 ## Scripts (D15)
 
 | Script | Purpose | Key Env Vars |

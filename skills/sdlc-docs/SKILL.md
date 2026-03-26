@@ -33,6 +33,21 @@ You maintain the living documentation for the SDLC system. Documentation is not 
 | `knowledge_schema` | Inspect valid types, scopes, tags |
 | `knowledge_registry_add` | Add new tags, repos, programs to Vault registries |
 
+## Conversation State
+
+On entry, read the current `conversation-state` note for this workspace:
+- Search: `anvil_search` type=conversation-state, workspace=current
+- If `status=paused`: read `handoff_note`, brief user, confirm continuation
+- If `status=active`: load `decided`, `open`, `last_skill`, `work_items` as context
+- If not found: create new conversation-state (topic inferred, status=active)
+
+On exit, update conversation-state before finishing:
+- Append decisions made to `decided`
+- Remove resolved questions from `open`
+- Add new work item IDs to `work_items`
+- Set `last_skill` to `sdlc-docs`
+- If user pauses: write `handoff_note`, set `status=paused`
+
 ## Operations
 
 ### `explore` — Codebase Exploration & Vault Ingestion (Flow 4)

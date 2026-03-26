@@ -34,6 +34,21 @@ You are the implementation engine. You pick up work items, understand their requ
 | `forge_develop` | Create or resume an isolated code session (git worktree) for a repo + work item |
 | `forge_repo_list` | Discover repos in the local index |
 
+## Conversation State
+
+On entry, read the current `conversation-state` note for this workspace:
+- Search: `anvil_search` type=conversation-state, workspace=current
+- If `status=paused`: read `handoff_note`, brief user, confirm continuation
+- If `status=active`: load `decided`, `open`, `last_skill`, `work_items` as context
+- If not found: create new conversation-state (topic inferred, status=active)
+
+On exit, update conversation-state before finishing:
+- Append decisions made to `decided`
+- Remove resolved questions from `open`
+- Add new work item IDs to `work_items`
+- Set `last_skill` to `sdlc-developer`
+- If user pauses: write `handoff_note`, set `status=paused`
+
 ## Scripts (in session path)
 
 When `forge_develop` creates or resumes a session, it installs enforcement scripts into the session's `.forge/scripts/` directory. Always use these — they read workflow metadata automatically and do the right thing for every workflow type (owner, fork, contributor).
