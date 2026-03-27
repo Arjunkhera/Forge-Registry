@@ -57,7 +57,7 @@ End-to-end design session: research → synthesis → proposals → decisions �
 
 1. **Read project context from Anvil:**
    - Project note via `anvil_get_note`
-   - Related spike conclusions via `anvil_search` (type: work-item, subtype: spike, status: done)
+   - Related spike conclusions via `anvil_search` (type: story, subtype: spike, status: done)
    - Existing design notes via `anvil_search` (tags: [design-proposal])
    - Prior decisions via `anvil_search` (tags: [decision])
 

@@ -90,7 +90,7 @@ Always read the current note via `anvil_get_note` before updating to preserve ex
 Generate a status report by querying Anvil:
 
 1. Read project note via `anvil_get_note`
-2. Query work items: `anvil_query_view` with `filter: { type: "work-item", project: "{id}" }`, `groupBy: "status"`
+2. Query work items: `anvil_query_view` with `filter: { type: "story", project: "{id}" }`, `groupBy: "status"`
 3. Check for blocked items specifically
 4. Query recent journal entries: `anvil_search` with project tag, last 7 days
 5. Present concise dashboard

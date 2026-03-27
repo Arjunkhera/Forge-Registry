@@ -128,7 +128,7 @@ Wait for user approval, modifications, or rejection.
 ### Step 6: Create in Anvil
 
 For each approved work item:
-1. Call `anvil_create_note` with type `work-item`, appropriate subtype, and full spec
+1. Call `anvil_create_note` with type `story`, appropriate subtype, and full spec
 2. Set status to `ready` (or `draft` if user wants further refinement)
 3. Log planning rationale in project scratch via `anvil_create_note` (journal type) with `#decision` tag
 
