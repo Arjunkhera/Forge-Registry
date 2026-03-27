@@ -1,0 +1,13 @@
+id: persona-id
+name: Persona Name
+version: 1.0.0
+description: One- or two-sentence description of this persona's role and primary
+  behavioral frame.
+type: persona
+author: Arjun Khera
+license: MIT
+tags:
+  - example-tag
+dependencies: {}
+files:
+  - PERSONA.md
