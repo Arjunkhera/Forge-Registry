@@ -1,81 +1,55 @@
-name: conversation-state
-parent: _core
+id: conversation-state
+name: Conversation State
 description: "Tracks the live state of an active agent conversation — topic, open questions, decisions made, and handoff notes. One per session; replaced on each update."
-behaviors:
-  replace_body: true
-  singleton_per_session: true
-ttl:
-  inactive_days: 7
-  on_expiry: archive
+icon: "message-square"
 fields:
   topic:
-    type: string
-    required: true
-    description: Short label for what this conversation is about
+    type: text
+    required: false
   workspace:
-    type: string
-    required: true
-    description: Workspace ID this conversation is running in
+    type: text
+    required: false
   session_id:
-    type: string
+    type: text
     required: false
-    description: Forge session ID if code work is in progress
   status:
-    type: enum
-    values: [active, paused]
-    default: active
+    type: text
+    required: false
   decided:
-    type: string_list
+    type: text
     required: false
-    description: Compressed decisions made during this conversation
   open:
-    type: string_list
+    type: text
     required: false
-    description: Unresolved questions still being worked through
   personas:
-    type: string_list
+    type: text
     required: false
-    description: Active persona IDs contributing to this conversation
   last_suggestion:
-    type: string
+    type: text
     required: false
-    description: Last output from the Haiku evaluator
   last_skill:
-    type: string
+    type: text
     required: false
-    description: Which skill ran last in this conversation
   handoff_note:
-    type: string
+    type: text
     required: false
-    description: Written at pause time — context for the next session to resume
   project:
-    type: reference
+    type: text
     required: false
-    description: Linked project note
   work_items:
-    type: string_list
+    type: text
     required: false
-    description: Work item IDs touched or created during this conversation
 template:
   frontmatter:
+    status: active
     tags: []
   body: |
     ## Topic
 
-    {topic}
-
     ## Status
-
-    {status}
 
     ## Decided
 
-    - {decision}
-
     ## Open Questions
 
-    - {question}
-
     ## Handoff Note
-
-    {handoff_note}
