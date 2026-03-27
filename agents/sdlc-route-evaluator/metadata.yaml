@@ -1,0 +1,16 @@
+id: sdlc-route-evaluator
+name: Route Evaluator
+version: 1.0.0
+description: Lightweight Haiku-powered routing evaluator. Reads conversation-state
+  and returns stay or suggest:skill-name. Fired by orchestrator on pulse-check phrases.
+type: agent
+model: claude-haiku-4-5-20251001
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - routing
+  - evaluator
+dependencies: {}
+files: []
