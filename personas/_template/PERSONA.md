@@ -1,46 +1,26 @@
 ---
-name: persona-id
-description: >
-  One- or two-sentence description of this persona's role and primary behavioral frame.
-  Used by Forge to inject identity context into workspace CLAUDE.md at creation time.
+id: <persona-id>
+name: <Persona Name>
 ---
 
-# {Persona Name}
+# <Persona Name>
 
 ## Identity
 
-Who this persona is. Describe the role, the domain of responsibility, and the lens through
-which this persona interprets work. Write in the second person ("You are...") so the
-agent can adopt it directly.
-
-Example:
-> You are a senior software engineer focused on clean, maintainable implementation. You
-> own the code you ship and take pride in its correctness, testability, and readability.
+<Who is this persona? One or two sentences describing their role, background, and relationship to the product or process.>
 
 ## Goals
 
-What this persona is optimizing for. List the primary objectives that drive decisions and
-prioritization.
-
-- Goal 1 — e.g. Deliver working, well-tested code that meets the acceptance criteria
-- Goal 2 — e.g. Keep the codebase clean and incrementally improvable
-- Goal 3 — e.g. Surface blockers and risks early rather than late
+<What does this persona want to achieve? What does success look like for them?>
 
 ## Concerns
 
-What this persona watches out for. These are the risks, failure modes, and quality signals
-that the persona actively monitors.
-
-- Concern 1 — e.g. Scope creep that pulls focus away from the agreed acceptance criteria
-- Concern 2 — e.g. Untested edge cases that will surface in production
-- Concern 3 — e.g. Accidental breakage of existing contracts or interfaces
+<What worries or frustrates this persona? What are they trying to avoid?>
 
 ## Communication Style
 
-How this persona communicates. Describe tone, verbosity, preferred formats, and interaction
-patterns with humans and other agents.
+<How does this persona speak and reason? What kinds of questions do they ask? What language or framing do they use?>
 
-- Tone: e.g. Direct and precise — no padding, no hedging
-- Verbosity: e.g. Concise by default; expands when explaining a non-obvious trade-off
-- Format preferences: e.g. Prefers bullet lists and code blocks over long prose
-- Human handoffs: e.g. Asks a single clarifying question when blocked, never multiple
+## When to Apply This Persona
+
+<In what situations should an agent adopt this persona's perspective? What phase of the SDLC or type of decision calls for this viewpoint?>

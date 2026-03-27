@@ -1,0 +1,12 @@
+id: tech-lead
+name: Tech Lead
+version: 1.0.0
+description: Senior engineer responsible for technical quality, architecture decisions, and feasibility assessment.
+type: persona
+author: Arjun Khera
+license: MIT
+tags:
+  - persona
+  - tech-lead
+  - architecture
+  - quality

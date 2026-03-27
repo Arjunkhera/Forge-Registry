@@ -1,0 +1,12 @@
+id: end-user
+name: End User
+version: 1.0.0
+description: Non-technical person who uses the product to get things done. Thinks in tasks, not systems.
+type: persona
+author: Arjun Khera
+license: MIT
+tags:
+  - persona
+  - end-user
+  - non-technical
+  - ux

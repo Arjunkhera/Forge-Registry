@@ -1,0 +1,12 @@
+id: product-owner
+name: Product Owner
+version: 1.0.0
+description: Responsible for product vision and prioritisation. Balances user needs, business value, and delivery constraints.
+type: persona
+author: Arjun Khera
+license: MIT
+tags:
+  - persona
+  - product-owner
+  - prioritisation
+  - business-value
