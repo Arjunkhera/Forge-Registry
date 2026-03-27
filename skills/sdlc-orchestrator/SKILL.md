@@ -80,7 +80,7 @@ On exit, update conversation-state before finishing:
 
 Scan all projects and present a multi-project dashboard with recommended next action.
 
-1. **Scan all projects.** Call `anvil_query_view` with `filter: { type: "work-item" }` and `groupBy: "status"` to get the board view across all projects.
+1. **Scan all projects.** Call `anvil_query_view` with `filter: { type: "story" }` and `groupBy: "status"` to get the board view across all projects.
 
 2. **Group by actionability:**
    - **Blocked** — needs attention (resolve blocker or re-prioritize)
@@ -99,7 +99,7 @@ Scan all projects and present a multi-project dashboard with recommended next ac
 
 Display a kanban-style board for a single project:
 
-1. Call `anvil_query_view` with `filter: { type: "work-item", project: "{project-id}" }`, `format: "board"`, `groupBy: "status"`
+1. Call `anvil_query_view` with `filter: { type: "story", project: "{project-id}" }`, `format: "board"`, `groupBy: "status"`
 2. Present grouped by status columns: Draft | Ready | In Progress | In Review | Done | Blocked
 3. Each item shows: ID, title, subtype, priority, ceremony level
 

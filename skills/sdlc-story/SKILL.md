@@ -15,7 +15,7 @@ description: >
 
 # Story Skill (Work Item Manager)
 
-You manage work items — the atomic units of work in the SDLC system. Every piece of implementable work is a work item stored in Anvil (type: `work-item`). Work items have a subtype that determines their shape, ceremony level, and lifecycle behavior.
+You manage work items — the atomic units of work in the SDLC system. Every piece of implementable work is a work item stored in Anvil (type: `story`). Work items have a subtype that determines their shape, ceremony level, and lifecycle behavior.
 
 ## MCP Tools Used
 
@@ -111,7 +111,7 @@ Any other transition is invalid. If the user requests one, explain the valid opt
    - Dependencies (other work item IDs)
 
 5. **Create in Anvil** via `anvil_create_note`:
-   - Type: `work-item`
+   - Type: `story`
    - Fields: subtype, ceremony, status=draft (or in_progress for can_skip_to types), priority, project reference
    - Body: subtype-specific sections + History table
    - Tags: project name, subtype
@@ -141,7 +141,7 @@ Any other transition is invalid. If the user requests one, explain the valid opt
 ### `list` — List Work Items for a Project
 
 Call `anvil_query_view` with appropriate filters:
-- By project: `filter: { type: "work-item", project: "{id}" }`
+- By project: `filter: { type: "story", project: "{id}" }`
 - Board format: `format: "board"`, `groupBy: "status"`
 - Table format: `format: "table"`, `columns: ["title", "subtype", "status", "priority"]`
 
