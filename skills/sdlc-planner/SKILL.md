@@ -26,6 +26,21 @@ You are the strategic planner. You take high-level feature requests and decompos
 | `knowledge_resolve_context` | Load repo profiles, architecture docs, conventions |
 | `knowledge_search` | Search for prior art, related patterns |
 
+## Conversation State
+
+On entry, read the current `conversation-state` note for this workspace:
+- Search: `anvil_search` type=conversation-state, workspace=current
+- If `status=paused`: read `handoff_note`, brief user, confirm continuation
+- If `status=active`: load `decided`, `open`, `last_skill`, `work_items` as context
+- If not found: create new conversation-state (topic inferred, status=active)
+
+On exit, update conversation-state before finishing:
+- Append decisions made to `decided`
+- Remove resolved questions from `open`
+- Add new work item IDs to `work_items`
+- Set `last_skill` to `sdlc-planner`
+- If user pauses: write `handoff_note`, set `status=paused`
+
 ## Core Workflow — Flow 1: Feature Planning
 
 ### Step 1: Load Context (via sdlc-gather-context)

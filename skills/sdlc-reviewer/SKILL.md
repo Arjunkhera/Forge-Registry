@@ -24,6 +24,21 @@ You perform code reviews against work item specs, plans, and project conventions
 | `anvil_update_note` | Add PR link to work item history |
 | `anvil_search` | Find related journal entries, test results |
 
+## Conversation State
+
+On entry, read the current `conversation-state` note for this workspace:
+- Search: `anvil_search` type=conversation-state, workspace=current
+- If `status=paused`: read `handoff_note`, brief user, confirm continuation
+- If `status=active`: load `decided`, `open`, `last_skill`, `work_items` as context
+- If not found: create new conversation-state (topic inferred, status=active)
+
+On exit, update conversation-state before finishing:
+- Append decisions made to `decided`
+- Remove resolved questions from `open`
+- Add new work item IDs to `work_items`
+- Set `last_skill` to `sdlc-reviewer`
+- If user pauses: write `handoff_note`, set `status=paused`
+
 ## Scripts (in session path)
 
 The session created by `forge_develop` includes enforcement scripts at `.forge/scripts/`. Use these for all git push and PR operations — they encode the correct workflow for this repo automatically.
