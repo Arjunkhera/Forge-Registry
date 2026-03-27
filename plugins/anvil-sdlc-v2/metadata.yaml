@@ -2,7 +2,7 @@ id: anvil-sdlc-v2
 name: Anvil SDLC v2
 version: 1.0.0
 description: Complete software development lifecycle plugin for the Horus
-  platform. 10 skills, 7 subagents, and skill scripts for planning, designing,
+  platform. 11 skills, 8 subagents, and skill scripts for planning, designing,
   implementing, testing, reviewing, documenting, and shipping software.
 type: plugin
 author: Arjun Khera
@@ -20,6 +20,7 @@ skills:
   - sdlc-story
   - sdlc-planner
   - sdlc-designer
+  - sdlc-discovery
   - sdlc-developer
   - sdlc-tester
   - sdlc-reviewer
@@ -30,6 +31,7 @@ agents:
   - sdlc-implement-story
   - sdlc-plan-feature
   - sdlc-design-proposal
+  - sdlc-route-evaluator
   - sdlc-test-suite
   - sdlc-doc-sync
   - sdlc-release

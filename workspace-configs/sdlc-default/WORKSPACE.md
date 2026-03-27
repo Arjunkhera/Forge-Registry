@@ -3,7 +3,7 @@ name: SDLC v2 Default Workspace
 version: 1.2.0
 description: >
   Default workspace configuration for the Horus SDLC v2 workflow. Provides a complete software
-  development lifecycle with 9 skills, 6 subagents, and skill scripts for planning, implementing,
+  development lifecycle with 11 skills, 8 subagents, and skill scripts for planning, implementing,
   testing, reviewing, documenting, and shipping software. All SDLC state lives in Anvil as typed
   notes; architecture knowledge comes from Vault; workspaces are managed by Forge.
 
@@ -29,7 +29,11 @@ skills: []
 # Personas — role identity artifacts injected into workspace CLAUDE.md at creation time.
 # Each entry is a persona id from the registry/personas/ directory.
 # Forge resolves, installs, and appends persona content to the workspace system prompt.
-personas: []
+personas:
+  - end-user
+  - product-owner
+  - tech-lead
+  - skeptic
 
 # MCP server connections — URLs resolved from ~/.forge/config.yaml at creation time
 mcp_servers:
