@@ -31,3 +31,7 @@ agents:
   - sdlc-test-suite
   - sdlc-doc-sync
   - sdlc-release
+types:
+  - work-item
+  - plan
+  - conversation-state
