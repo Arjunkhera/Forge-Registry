@@ -49,18 +49,21 @@ Legacy scripts (`branch-start.sh`, `commit.sh`, `branch-finish.sh`) in the skill
 
 ## Core Workflow
 
-### Phase 1: Load Context
+### Phase 1: Load Context (via sdlc-gather-context)
 
-Before any implementation:
+Delegate all context loading to the `sdlc-gather-context` subagent. Do not load context inline.
 
-1. **Read work item spec** via `anvil_get_note` — acceptance criteria, subtype, ceremony
-2. **Read project note** via `anvil_get_note` — repos, program context
-3. **Load Vault context** via `knowledge_resolve_context` for each repo in the project:
-   - Repo profile (tech stack, build/test/lint commands, conventions)
-   - Architecture docs (key modules, data flow, patterns)
-   - Coding conventions (naming, error handling, structure)
-4. **Read existing plans** via `anvil_search` with type `plan` and work_item reference
-5. **Read project-local agent config and rules** if they exist (optional override/supplement to Vault)
+Invoke with:
+```
+caller: sdlc-developer
+needs:
+  - anvil: work item note (spec, acceptance criteria, subtype)
+  - anvil: project note (repos, program context)
+  - anvil: existing plan for this work item
+  - vault: repo profiles + conventions for each repo in project
+```
+
+Wait for the synthesized briefing before proceeding. Use only the briefing — do not perform additional Vault or Anvil reads for context that should have been in the briefing.
 
 If Vault is unavailable, degrade gracefully — use project-local config as fallback. Note reduced quality.
 
