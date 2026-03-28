@@ -55,10 +55,9 @@ When `forge_develop` creates or resumes a session, it installs enforcement scrip
 
 | Script | Purpose |
 |--------|---------|
+| `.forge/scripts/commit.sh` | Commit staged changes as a conventional commit: `<type>(<scope>): <description>` |
 | `.forge/scripts/push.sh` | Push current branch to the correct remote for this repo's workflow |
 | `.forge/scripts/create-pr.sh` | Create a PR against the correct target (handles fork vs owner vs contributor) |
-
-Legacy scripts (`branch-start.sh`, `commit.sh`, `branch-finish.sh`) in the skill's own `scripts/` directory remain available for workspace-level operations. For repo-level git operations, prefer the session scripts above.
 
 **The SKILL.md decides WHEN to call scripts. Scripts handle the mechanical execution.**
 
@@ -136,13 +135,18 @@ If a workspace exists (resume):
 Code sessions are isolated git worktrees created on-demand. Whenever you need to make code changes to a repo:
 
 1. Call `forge_repo_list` to verify the repo exists in the index
-2. Call `forge_develop` with:
+2. Derive the feature branch name from the work item:
+   - Pattern: `<subtype>/<id>-<slug>` where `subtype` comes from the work item's `type` field (e.g. `bugfix`, `feature`, `refactor`) and `slug` is a short kebab-case summary of the title
+   - Example: work item `{ id: "5e815a8d", type: "bugfix", title: "Fix developer branching" }` → `bugfix/5e815a8d-fix-developer-branching`
+3. Call `forge_develop` with:
    - `repo`: the repo name from the index
    - `workItem`: the work item ID (e.g. `"9faec02d"` or the full UUID)
-3. **Handle the response:**
-   - `status: "created"` or `status: "resumed"` → session ready, use `sessionPath` for all code changes
+   - `branch`: the derived feature branch name (always pass this — never omit it)
+4. **Handle the response:**
+   - `status: "created"` → new session on the feature branch; proceed with implementation
+   - `status: "resumed"` → existing session already on the correct branch; skip branch setup and continue from where the session left off
    - `status: "needs_workflow_confirmation"` → see workflow confirmation flow below
-4. **All code changes go into `sessionPath`**. Never write directly to the repo's source path.
+5. **All code changes go into `sessionPath`**. Never write directly to the repo's source path.
 
 **Workflow confirmation flow:**
 
@@ -166,8 +170,9 @@ For each plan step:
 1. **Implement the changes** in `sessionPath` following conventions from Vault
 2. **Update plan progress** via `anvil_update_note`:
    - Current step: ✅ done → 🔄 in progress → ⬜ pending
-3. **Commit** using conventional commit format (from `$SDLC_COMMIT_FORMAT`):
-   - Run `git commit` directly inside the session path
+3. **Commit** using conventional commit format:
+   - Stage changes, then run `.forge/scripts/commit.sh <type> <scope> <description>` inside `sessionPath`
+   - Example: `.forge/scripts/commit.sh feat forge "add commit.sh to session scripts"`
    - One commit per logical change
 4. **Log any deviations** in work item journal via `anvil_create_note` (journal type) with `#deviation` tag
 
