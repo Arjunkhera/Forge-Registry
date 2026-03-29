@@ -1,17 +1,18 @@
 id: doc-gen-claudemd-generator
 name: Doc-Gen — CLAUDE.md Generator
-version: 0.1.0
+version: 0.2.0
 description: >
-  Generates CLAUDE.md files for repositories by synthesizing repo-profile
-  Vault pages and knowledge graph context. Produces Claude Code-optimized
-  project instructions with conventions, commands, and architecture overview.
+  Generates CLAUDE.md files for repositories. Two sections: repo identity
+  (name + Vault pointer for graph resolution) and a curated Always Load list
+  of Vault pages. Merges with existing CLAUDE.md when present. Requires user
+  review before commit.
 type: skill
 author: Arjun Khera
 license: MIT
 tags:
   - doc-gen
-  - claudemd
   - vault
-  - generator
+  - claude-md
+  - context
 dependencies: {}
 files: []
