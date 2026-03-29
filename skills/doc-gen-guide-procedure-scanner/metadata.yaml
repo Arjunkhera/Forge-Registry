@@ -1,10 +1,11 @@
 id: doc-gen-guide-procedure-scanner
 name: Doc-Gen — Guide & Procedure Scanner
-version: 0.1.0
+version: 0.2.0
 description: >
   Analyzes a source repository and generates structured guide and procedure
-  Vault pages. Extracts repeatable workflows, setup steps, and operational
-  runbooks. Assigns confidence score (1-5) and auto-generated flag.
+  Vault pages. Detects documentation from READMEs, docs folders, CI configs,
+  Makefiles, and scripts. Assigns confidence scores and writes via write-path
+  pipeline. Part of the doc-gen pipeline.
 type: skill
 author: Arjun Khera
 license: MIT
