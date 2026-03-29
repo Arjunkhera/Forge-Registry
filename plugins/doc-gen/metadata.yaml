@@ -1,0 +1,23 @@
+id: doc-gen
+name: Doc-Gen
+version: 0.1.0
+description: >
+  LLM-powered documentation generation pipeline for Vault. Analyzes source
+  repositories and produces structured Vault knowledge pages (repo-profiles,
+  guides, procedures) and CLAUDE.md files. Powered by Neo4j knowledge graph
+  with 5 edge types.
+type: plugin
+author: Arjun Khera
+license: MIT
+tags:
+  - doc-gen
+  - vault
+  - knowledge-graph
+  - horus
+skills:
+  - doc-gen-repo-profile-scanner
+  - doc-gen-edge-proposal-scanner
+  - doc-gen-guide-procedure-scanner
+  - doc-gen-claudemd-generator
+  - doc-gen-retrieval-subagent
+agents: []
