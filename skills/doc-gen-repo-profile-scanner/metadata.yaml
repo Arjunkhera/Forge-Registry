@@ -1,10 +1,12 @@
 id: doc-gen-repo-profile-scanner
 name: Doc-Gen — Repo Profile Scanner
-version: 0.1.0
+version: 0.2.0
 description: >
-  Analyzes a source repository and generates a structured repo-profile Vault
-  page. Extracts tech stack, conventions, key patterns, test commands, and
-  structure. Assigns confidence score (1-5) and auto-generated flag.
+  Analyzes a source repository via a Forge code session and generates a
+  structured repo-profile Vault page. Extracts tech stack, key dependencies,
+  conventions, entry points, and build/test commands. Assigns a confidence
+  score (1-5), writes the page via the full Vault write-path pipeline, and
+  creates a DOCS edge in the knowledge graph.
 type: skill
 author: Arjun Khera
 license: MIT
