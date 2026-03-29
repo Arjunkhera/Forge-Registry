@@ -1,0 +1,17 @@
+id: doc-gen-edge-proposal-scanner
+name: Doc-Gen — Edge Proposal Scanner
+version: 0.1.0
+description: >
+  Scans a source repository and proposes knowledge graph edges between Vault
+  pages. Identifies relationships across the 5 supported edge types and
+  produces edge proposals for review before Neo4j commit.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - doc-gen
+  - scanner
+  - vault
+  - knowledge-graph
+dependencies: {}
+files: []
