@@ -1,0 +1,17 @@
+id: doc-gen-human-verification
+name: Doc-Gen — Human Verification
+version: 0.1.0
+description: >
+  Two-tier verification sub-skill for the doc-gen pipeline. Determines whether
+  a proposed change is BLOCKING (new taxonomy — requires human approval) or
+  NON-BLOCKING (generated content — proceeds automatically). Manages the
+  blocking interaction flow when taxonomy changes are needed.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - doc-gen
+  - verification
+  - human-in-the-loop
+dependencies: {}
+files: []
