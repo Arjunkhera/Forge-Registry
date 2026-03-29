@@ -283,3 +283,18 @@ Skills and plugins are compiled differently per target:
 | Deleting a workspace to clean up code | `workspace_delete` only removes the context folder. Use `session_cleanup` for git worktrees. |
 | Assuming storyId is required for workspace creation | storyId is optional metadata |
 | Creating a session without checking for existing ones | `forge_develop` automatically resumes existing sessions for the same workItem + repo |
+| Editing registry artifacts at the installed path | **Never** edit files under `~/Horus/data/registry/`. Those are generated. Edit source in `Forge-Registry` repo and run `forge_install`. |
+
+## Registry Authoring
+
+> **Warning:** The installed registry at `~/Horus/data/registry/` is a generated artifact. Files there are overwritten on every `forge_install`. **Never edit them directly.**
+
+To add or update skills, agents, plugins, or workspace-configs:
+
+1. Find the `Forge-Registry` repo via `forge_repo_resolve(name: "Forge-Registry")`
+2. Use `forge_develop` to create an isolated session: `forge_develop(repo: "Forge-Registry", workItem: "<your-task-id>")`
+3. Make changes inside `sessionPath` (under `skills/`, `plugins/`, `agents/`, or `workspace-configs/`)
+4. Commit and push, then open a PR against `master`
+5. After the PR merges, run `forge_install` in your workspace to pick up the changes
+
+The installed path (`~/Horus/data/registry/`) mirrors the registry after install — it is not the source of truth.
