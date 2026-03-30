@@ -1,10 +1,11 @@
 id: doc-gen-retrieval-subagent
-name: Doc-Gen — Retrieval Subagent
-version: 0.1.0
+name: Doc-Gen — Retrieval Sub-Agent
+version: 0.2.0
 description: >
-  Subagent that retrieves and synthesizes Vault knowledge for doc-gen pipeline
-  stages. Resolves repo context, fetches related pages via Neo4j graph
-  traversal, and returns structured briefings for other doc-gen skills.
+  Constructs a compact manifest of relevant Vault pages for a given repo by
+  traversing the Neo4j knowledge graph. Invoked by other doc-gen skills at
+  session bootstrap or on-demand. Returns a structured manifest the calling
+  agent uses to decide which pages to load in full.
 type: skill
 author: Arjun Khera
 license: MIT
@@ -13,5 +14,6 @@ tags:
   - retrieval
   - vault
   - subagent
+  - neo4j
 dependencies: {}
 files: []
