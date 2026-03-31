@@ -24,6 +24,7 @@ You analyze a source repository via a Forge code session and produce a `repo-pro
 | `knowledge_suggest_metadata` | Get frontmatter field suggestions from Vault |
 | `knowledge_validate_page` | Validate the page against schema before writing |
 | `knowledge_write_page` | Write the page via git workflow (branch → commit → PR) |
+| `knowledge_registry_add` | Register the repo (with aliases) in the repos registry via PR |
 | `knowledge_create_edge` | Create a `DOCS` edge linking the page to the repo node |
 | `anvil_update_note` | Update work item status when invoked from a work item |
 
@@ -195,7 +196,30 @@ knowledge_write_page(
 ```
 - Record the PR URL returned.
 
-### Phase 5: Create Graph Edge
+### Phase 5: Registry Update (mandatory)
+
+After `knowledge_write_page` succeeds, register the repo in the Vault repos registry. This is **non-optional** — without it, the repo will not appear in alias-based `resolve_context` lookups.
+
+Extract `repo_name` and `aliases` from the generated profile frontmatter, then call:
+
+```
+knowledge_registry_add({
+  registry: "repos",
+  entry: {
+    id: "{repo-name}",
+    description: "{one-line description from profile}",
+    aliases: ["{alias1}", "{alias2}", ...],  // from frontmatter aliases field
+  },
+  via_pr: true,  // write to git branch + open PR, do not edit in-place
+})
+```
+
+**Response handling:**
+- Success: `{ added: true, pr_url: "..." }` — log the PR URL in the output summary
+- `duplicate_entry` error: repo already registered — skip silently, log at DEBUG
+- Any other error: log at WARN but do **not** fail the scan (non-blocking)
+
+### Phase 6: Create Graph Edge
 
 After the page is written:
 
@@ -211,7 +235,7 @@ This links the Vault page to the repo node in Neo4j, enabling graph traversal fr
 
 If `knowledge_create_edge` is unavailable or returns an error, log the failure and continue — the page write is the primary artifact.
 
-### Phase 6: Update Work Item (if applicable)
+### Phase 7: Update Work Item (if applicable)
 
 If this skill was invoked from a work item:
 
@@ -258,11 +282,12 @@ When complete, report to the user:
 ```
 Repo Profile Scanner — Complete
 
-Repo:        {repo-name}
-Confidence:  {score}/5
-Vault PR:    {PR URL}
-Edge:        DOCS link created (or: failed — see above)
-Work item:   {status updated to "done" / "not applicable"}
+Repo:         {repo-name}
+Confidence:   {score}/5
+Vault PR:     {PR URL}
+Registry PR:  {PR URL (or: already registered / failed — see above)}
+Edge:         DOCS link created (or: failed — see above)
+Work item:    {status updated to "done" / "not applicable"}
 ```
 
 If confidence < 3, add a warning:
