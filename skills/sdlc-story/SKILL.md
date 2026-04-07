@@ -29,18 +29,20 @@ You manage work items — the atomic units of work in the SDLC system. Every pie
 
 ## Conversation State
 
+Conversation-state notes store **metadata in frontmatter fields** and **content in the markdown body**. The body uses `## Decided`, `## Open Questions`, and `## Handoff Note` sections. Never write decided, open, or handoff content to frontmatter fields.
+
 On entry, read the current `conversation-state` note for this workspace:
 - Search: `anvil_search` type=conversation-state, workspace=current
-- If `status=paused`: read `handoff_note`, brief user, confirm continuation
-- If `status=active`: load `decided`, `open`, `last_skill`, `work_items` as context
-- If not found: create new conversation-state (topic inferred, status=active)
+- If `status=paused`: parse the `## Handoff Note` section from the note body, present to user, confirm continuation
+- If `status=active`: parse `## Decided` and `## Open Questions` sections from the body; read `last_skill`, `work_items` from fields. Use these to inform your work.
+- If not found: create new conversation-state (topic inferred, status=active, body with empty `## Decided`, `## Open Questions`, `## Handoff Note` sections)
 
-On exit, update conversation-state before finishing:
-- Append decisions made to `decided`
-- Remove resolved questions from `open`
-- Add new work item IDs to `work_items`
-- Set `last_skill` to `sdlc-story`
-- If user pauses: write `handoff_note`, set `status=paused`
+On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+- Append decisions under `## Decided`
+- Remove resolved items from `## Open Questions`
+- Add new work item IDs to `work_items` field
+- Set `last_skill` field to `sdlc-story`
+- If user pauses: write handoff summary under `## Handoff Note`, set `status` field to `paused`
 
 ## Work Item Subtypes
 

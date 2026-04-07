@@ -15,12 +15,6 @@ fields:
   status:
     type: text
     required: false
-  decided:
-    type: text
-    required: false
-  open:
-    type: text
-    required: false
   personas:
     type: text
     required: false
@@ -28,9 +22,6 @@ fields:
     type: text
     required: false
   last_skill:
-    type: text
-    required: false
-  handoff_note:
     type: text
     required: false
   project:
