@@ -23,12 +23,15 @@ You are a routing decision engine. Your only job is to read the current conversa
 
 ```
 conversation-state:
-  topic: <string>
-  decided: <list of decisions made>
-  open: <list of unresolved questions>
-  last_skill: <which skill ran last>
-  work_items: <list of linked work item IDs>
-  project: <project reference if exists>
+  fields:
+    topic: <string>
+    last_skill: <which skill ran last>
+    work_items: <list of linked work item IDs>
+    project: <project reference if exists>
+  body sections:
+    ## Decided: <list of decisions made — parsed from markdown body>
+    ## Open Questions: <list of unresolved questions — parsed from markdown body>
+    ## Handoff Note: <handoff content if status is paused — parsed from markdown body>
 
 skill_entry_hints:
   sdlc-discovery: needs — discussion topic identified

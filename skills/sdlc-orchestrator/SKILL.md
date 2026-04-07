@@ -32,11 +32,11 @@ Before doing anything else, read the conversation-state for the current workspac
 
    | Result | Action |
    |--------|--------|
-   | `status: paused` | Read `handoff_note`. Present to user: "You were in the middle of something. {handoff_note}. Want to pick up where you left off?" Wait for user response before proceeding. |
-   | `status: active` | Load context fields: `decided`, `open`, `last_skill`, `work_items`. Use these to inform routing and responses throughout the session. |
-   | Not found | Create a new conversation-state note: infer `topic` from the user's first message, set `status: active`. Proceed normally. |
+   | `status: paused` | Parse the `## Handoff Note` section from the note **body**. Present to user: "You were in the middle of something. {handoff_note}. Want to pick up where you left off?" Wait for user response before proceeding. |
+   | `status: active` | Parse `## Decided` and `## Open Questions` sections from the note **body**; read `last_skill`, `work_items` from **fields**. Use these to inform routing and responses throughout the session. |
+   | Not found | Create a new conversation-state note: infer `topic` from the user's first message, set `status: active`. Body should contain empty `## Decided`, `## Open Questions`, and `## Handoff Note` sections. Proceed normally. |
 
-3. **Keep state in working memory** for the duration of the session. Update it via `anvil_update_note` whenever meaningful state changes (e.g., a routing decision is made, a skill hands off, a work item is identified).
+3. **Keep state in working memory** for the duration of the session. Update it via `anvil_update_note` with `body:` containing the full updated markdown whenever meaningful state changes (e.g., a routing decision is made, a skill hands off, a work item is identified). Update metadata fields (`last_skill`, `work_items`, `status`) via the `fields` parameter.
 
 ## Core Responsibilities
 
@@ -61,18 +61,20 @@ Before doing anything else, read the conversation-state for the current workspac
 
 ## Conversation State
 
+Conversation-state notes store **metadata in frontmatter fields** and **content in the markdown body**. The body uses `## Decided`, `## Open Questions`, and `## Handoff Note` sections. Never write decided, open, or handoff content to frontmatter fields.
+
 On entry, read the current `conversation-state` note for this workspace:
 - Search: `anvil_search` type=conversation-state, workspace=current
-- If `status=paused`: read `handoff_note`, brief user, confirm continuation
-- If `status=active`: load `decided`, `open`, `last_skill`, `work_items` as context
-- If not found: create new conversation-state (topic inferred, status=active)
+- If `status=paused`: parse the `## Handoff Note` section from the note body, brief user, confirm continuation
+- If `status=active`: parse `## Decided` and `## Open Questions` from the body; read `last_skill`, `work_items` from fields
+- If not found: create new conversation-state (topic inferred, status=active, body with empty section headers)
 
-On exit, update conversation-state before finishing:
-- Append decisions made to `decided`
-- Remove resolved questions from `open`
-- Add new work item IDs to `work_items`
-- Set `last_skill` to `sdlc-orchestrator`
-- If user pauses: write `handoff_note`, set `status=paused`
+On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+- Append decisions under `## Decided`
+- Remove resolved items from `## Open Questions`
+- Add new work item IDs to `work_items` field
+- Set `last_skill` field to `sdlc-orchestrator`
+- If user pauses: write handoff summary under `## Handoff Note`, set `status` field to `paused`
 
 ## Operations
 

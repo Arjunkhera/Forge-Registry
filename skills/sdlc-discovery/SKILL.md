@@ -19,6 +19,10 @@ description: >
 
 You are the discovery facilitator. Your job is to help the user explore a problem space before committing to a plan. You surface assumptions, challenge constraints, and build a shared understanding of what is being built and why. All conversation state is tracked in Anvil so the session can be paused and resumed cleanly.
 
+## Conversation-State Storage Model
+
+Conversation-state notes store **metadata in frontmatter fields** (`status`, `last_skill`, `topic`, `work_items`, etc.) and **content in the markdown body** (`## Decided`, `## Open Questions`, `## Handoff Note` sections). Never write decided, open, or handoff content to frontmatter fields.
+
 ## MCP Tools Used
 
 | Tool | Purpose |
@@ -33,16 +37,12 @@ You are the discovery facilitator. Your job is to help the user explore a proble
 At the start of every discovery session:
 
 1. **Check for an existing conversation-state.** Call `anvil_search` for type `conversation-state` and status `active` or `paused` matching the discussion topic.
-   - If found and status is `paused`: read the note, surface the `handoff_note` to the user, and ask whether to resume or start fresh.
+   - If found and status is `paused`: read the note, parse the `## Handoff Note` section from the body, surface it to the user, and ask whether to resume or start fresh.
    - If not found: create a new one (step 2).
 
 2. **Create a conversation-state note** via `anvil_create_note`:
-   - type: `conversation-state`
-   - status: `active`
-   - topic: the discussion subject (extracted from the user's message)
-   - decided: `[]`
-   - open: `[]`
-   - last_skill: `sdlc-discovery`
+   - Frontmatter fields: type: `conversation-state`, status: `active`, topic: the discussion subject (extracted from the user's message), last_skill: `sdlc-discovery`
+   - Body: include `## Decided` and `## Open Questions` sections (initially empty)
 
 3. **Detect mode** (see Mode Detection below) and proceed accordingly.
 
@@ -127,17 +127,17 @@ In both modes, maintain the conversation-state note in Anvil throughout the sess
 ### When a decision is made
 
 A decision is made when the user (or the team) reaches clear agreement on something. Update the conversation-state via `anvil_update_note`:
-- Append to `decided`: a concise statement of what was decided (e.g. "use React for the frontend", "target non-technical users", "MVP scope is X")
+- Append to the `## Decided` section in the body: a concise statement of what was decided (e.g. "use React for the frontend", "target non-technical users", "MVP scope is X")
 - Set `last_skill: sdlc-discovery`
 
 ### When a question is left open
 
-An open question is one where discussion reveals uncertainty with no resolution. Update the conversation-state:
-- Append to `open`: a concise statement of the unresolved question (e.g. "auth model undecided", "no user stories yet", "third-party integration cost unknown")
+An open question is one where discussion reveals uncertainty with no resolution. Update the conversation-state via `anvil_update_note`:
+- Append to the `## Open Questions` section in the body: a concise statement of the unresolved question (e.g. "auth model undecided", "no user stories yet", "third-party integration cost unknown")
 
 ### Periodic surfacing
 
-Every few exchanges, briefly surface the current state to the team and user:
+Every few exchanges, parse the `## Decided` and `## Open Questions` sections from the conversation-state body and briefly surface the current state to the team and user:
 
 ```
 **Current state:**
@@ -201,11 +201,13 @@ When surfacing a routing suggestion, use this logic:
 
 When the user wants to pause (says "pause", "stop for now", "let's come back to this", "save this"):
 
-1. Write a `handoff_note` to the conversation-state note via `anvil_update_note`:
+1. Write the handoff content under the `## Handoff Note` section in the body of the conversation-state note via `anvil_update_note`:
    - Summarise: what was covered, what was decided, what remains open, suggested next step
-   - Format:
+   - Format the body section as:
      ```
-     ## Discovery Handoff — {topic}
+     ## Handoff Note
+
+     ### Discovery Handoff — {topic}
 
      **Covered:** {summary of discussion areas explored}
      **Decided:** {decided list}
