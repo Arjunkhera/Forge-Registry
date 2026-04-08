@@ -1,0 +1,8 @@
+generated_at: "2026-04-08T14:33:32.009500+00:00"
+files:
+  - path: "SKILL.md"
+    sha256: "d0305480f156b927818fb64d0292c1864401e2443d7a735a5e6b6ac802a656ec"
+  - path: "metadata.yaml"
+    sha256: "975aebf3efd49c4e6a987380d37c332782991cf33a232651df1db30f360785d2"
+  - path: "skill.yaml"
+    sha256: "975aebf3efd49c4e6a987380d37c332782991cf33a232651df1db30f360785d2"

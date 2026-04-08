@@ -1,0 +1,8 @@
+generated_at: "2026-04-08T14:33:32.009500+00:00"
+files:
+  - path: "SKILL.md"
+    sha256: "7b67c9e04eb65899f35b289f13cc4ed42b6aff41946bf6d80e35ece2147c30b4"
+  - path: "metadata.yaml"
+    sha256: "37fc2912fb75ffdf19ff547a8627435b0732edd0b11a27179f24cd811801853f"
+  - path: "scripts/run-tests.sh"
+    sha256: "bf0ee747c292b5c59a046e0380fa0c989419ff8171167631b1f4aa6e77862cbf"

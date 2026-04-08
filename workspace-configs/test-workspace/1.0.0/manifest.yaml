@@ -1,0 +1,6 @@
+generated_at: "2026-04-08T14:33:32.009500+00:00"
+files:
+  - path: "metadata.yaml"
+    sha256: "c798b211e799d89c3052279455f5e4ef85bc4222bfb8d241ff2f0ae40505689d"
+  - path: "workspace-config.yaml"
+    sha256: "c798b211e799d89c3052279455f5e4ef85bc4222bfb8d241ff2f0ae40505689d"
