@@ -1,0 +1,8 @@
+generated_at: "2026-04-08T14:33:32.009500+00:00"
+files:
+  - path: "SKILL.md"
+    sha256: "6028f0010e4160aef0e49ea82fbf5490d6739c10274512879e79dc1da46fdd16"
+  - path: "metadata.yaml"
+    sha256: "0b8dba333209b01935c7c8b15461c99aa2392cf74701de448269b44fb4bb0738"
+  - path: "scripts/create-pr.sh"
+    sha256: "d34533beb45afa4c1bfe52e2de1b3571bbf680d27c4943187c575de630905da9"

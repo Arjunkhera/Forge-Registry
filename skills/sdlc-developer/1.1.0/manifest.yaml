@@ -1,0 +1,12 @@
+generated_at: "2026-04-08T14:33:32.009500+00:00"
+files:
+  - path: "SKILL.md"
+    sha256: "7f9c15f16c9b485b99f6510565d43206030c6b2af9772fc14f9c98725ffe989b"
+  - path: "metadata.yaml"
+    sha256: "575e1c3061d5b181425350c257a01659f6b48ed279005ae7d3847d5eb55a20ad"
+  - path: "scripts/branch-finish.sh"
+    sha256: "be6192ecd8aac1ff5e4058d06fb9b5a890fbb885b6f0b76f52d8c7f28d1966f1"
+  - path: "scripts/branch-start.sh"
+    sha256: "c2af14d94c586a61fbc93caa11a43676ee48f5ec59c4cb4641907466dca06bf2"
+  - path: "scripts/commit.sh"
+    sha256: "fef814334757e28bab3cd25e44a5575717431dc579e82ac1e275912b2206fb4b"
