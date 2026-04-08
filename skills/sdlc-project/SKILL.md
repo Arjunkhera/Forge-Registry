@@ -22,10 +22,12 @@ All project state lives in Anvil as typed notes (type: `project`). Repo-level in
 
 | Tool | Purpose |
 |------|---------|
-| `anvil_create_note` | Create project notes |
-| `anvil_update_note` | Update project configuration |
+| `anvil_create_entity` | Create project notes with edges to program |
+| `anvil_update_entity` | Update project configuration (PATCH semantics) |
 | `anvil_get_note` | Read project details |
 | `anvil_search` | Find projects, check for duplicates |
+| `anvil_create_edge` | Link project to program, repos via edges |
+| `anvil_get_edges` | Query project relationships |
 | `knowledge_resolve_context` | Load Vault repo profiles for project repos |
 | `forge_repo_resolve` | Resolve local paths for repos |
 
@@ -39,7 +41,7 @@ On entry, read the current `conversation-state` note for this workspace:
 - If `status=active`: parse `## Decided` and `## Open Questions` sections from the body; read `last_skill`, `work_items` from fields. Use these to inform your work.
 - If not found: create new conversation-state (topic inferred, status=active, body with empty `## Decided`, `## Open Questions`, `## Handoff Note` sections)
 
-On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+On exit, update conversation-state body via `anvil_update_entity` with `body:` containing the full updated markdown:
 - Append decisions under `## Decided`
 - Remove resolved items from `## Open Questions`
 - Add new work item IDs to `work_items` field
@@ -56,7 +58,7 @@ On exit, update conversation-state body via `anvil_update_note` with `body:` con
    - Repos (one or more — each with a role: "Product code", "Data store", etc.)
    - Program membership (optional — which program does this belong to?)
 
-2. **Create project note in Anvil** via `anvil_create_note`:
+2. **Create project note in Anvil** via `anvil_create_entity`:
    - Type: `project`
    - Title: project name
    - Fields: status=active, program reference if applicable
@@ -73,7 +75,7 @@ On exit, update conversation-state body via `anvil_update_note` with `body:` con
 
 5. **Resolve local paths** for each repo via `forge_repo_resolve`. Note them in the project overview for reference.
 
-6. **Link to program** if applicable → update program note via `anvil_update_note`.
+6. **Link to program** if applicable → update program note via `anvil_update_entity`.
 
 7. **Confirm** creation with project ID, repos, and Vault status.
 
@@ -100,7 +102,7 @@ Generate a status report by querying Anvil:
 ### `link-program` — Add Project to a Program
 
 1. Check if program exists via `anvil_search` with type `program`
-2. If not, create it via `anvil_create_note` with type `program`
+2. If not, create it via `anvil_create_entity` with type `program`
 3. Update program note body to include this project
 4. Update project note fields to reference the program
 
@@ -109,8 +111,8 @@ Generate a status report by querying Anvil:
 1. Query all work items for the project
 2. Verify all are either `done` or `cancelled`
 3. If active items remain, warn the user and ask for confirmation
-4. Update project status to `archived` via `anvil_update_note`
-5. Log archival in project scratch via `anvil_create_note` (journal type)
+4. Update project status to `archived` via `anvil_update_entity`
+5. Log archival in project scratch via `anvil_create_entity` (journal type)
 
 ## Project Note Body Template
 

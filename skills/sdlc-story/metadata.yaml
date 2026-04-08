@@ -1,6 +1,6 @@
 id: sdlc-story
 name: SDLC Story / Work Item Manager
-version: 1.0.0
+version: 1.1.0
 description: Create and manage work items with 7 subtypes (feature, bugfix,
   refactor, spike, hotfix, task, chore), ceremony levels, and a full state
   machine. The atomic unit of work in the SDLC.

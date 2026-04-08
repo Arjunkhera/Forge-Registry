@@ -23,8 +23,8 @@ You are the quality gate. You verify that implementations meet their acceptance 
 |------|---------|
 | `anvil_get_note` | Read work item spec, plan, deviations |
 | `anvil_search` | Find related journal entries (deviations = additional test cases) |
-| `anvil_update_note` | Update work item with test results |
-| `anvil_create_note` | Log test results in journal |
+| `anvil_update_entity` | Update work item with test results |
+| `anvil_create_entity` | Log test results in journal |
 | `knowledge_resolve_context` | Load test conventions, framework info |
 
 ## Conversation State
@@ -37,7 +37,7 @@ On entry, read the current `conversation-state` note for this workspace:
 - If `status=active`: parse `## Decided` and `## Open Questions` sections from the body; read `last_skill`, `work_items` from fields. Use these to inform your work.
 - If not found: create new conversation-state (topic inferred, status=active, body with empty `## Decided`, `## Open Questions`, `## Handoff Note` sections)
 
-On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+On exit, update conversation-state body via `anvil_update_entity` with `body:` containing the full updated markdown:
 - Append decisions under `## Decided`
 - Remove resolved items from `## Open Questions`
 - Add new work item IDs to `work_items` field
@@ -178,7 +178,7 @@ Map results back to acceptance criteria:
 {reasoning}
 ```
 
-Log results in work item journal via `anvil_create_note`.
+Log results in work item journal via `anvil_create_entity`.
 
 ### Phase 6: Outcome
 

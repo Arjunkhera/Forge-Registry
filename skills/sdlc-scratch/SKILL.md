@@ -27,10 +27,10 @@ You manage the scratch/journal system for the SDLC. Scratches are the working me
 
 | Tool | Purpose |
 |------|---------|
-| `anvil_create_note` | Create new journal entries |
+| `anvil_create_entity` | Create new journal entries |
 | `anvil_search` | Search across all journals by tags, content, project |
 | `anvil_get_note` | Read specific journal entries |
-| `anvil_update_note` | Append to existing journal (body append for journal type) |
+| `anvil_update_entity` | Append to existing journal (body append for journal type) |
 
 ## Conversation State
 
@@ -42,7 +42,7 @@ On entry, read the current `conversation-state` note for this workspace:
 - If `status=active`: parse `## Decided` and `## Open Questions` sections from the body; read `last_skill`, `work_items` from fields. Use these to inform your work.
 - If not found: create new conversation-state (topic inferred, status=active, body with empty `## Decided`, `## Open Questions`, `## Handoff Note` sections)
 
-On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+On exit, update conversation-state body via `anvil_update_entity` with `body:` containing the full updated markdown:
 - Append decisions under `## Decided`
 - Remove resolved items from `## Open Questions`
 - Add new work item IDs to `work_items` field
@@ -67,7 +67,7 @@ On exit, update conversation-state body via `anvil_update_note` with `body:` con
    - If neither → global journal entry
    - If ambiguous → ask the user
 
-2. **Create journal entry via `anvil_create_note`:**
+2. **Create journal entry via `anvil_create_entity`:**
    - Type: `journal`
    - Title: brief descriptive title
    - Tags: user-specified + auto-suggested from content

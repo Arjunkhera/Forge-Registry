@@ -21,11 +21,14 @@ You manage work items — the atomic units of work in the SDLC system. Every pie
 
 | Tool | Purpose |
 |------|---------|
-| `anvil_create_note` | Create work items, plans, journal entries |
+| `anvil_create_entity` | Create work items, plans, journal entries with optional edges |
 | `anvil_get_note` | Read work item details |
-| `anvil_update_note` | Transition status, update fields, modify body |
+| `anvil_update_entity` | Transition status, update fields, modify body (PATCH semantics) |
 | `anvil_search` | Find work items by project, status, subtype |
 | `anvil_query_view` | Board views, filtered lists |
+| `anvil_create_edge` | Create block/reference edges between work items |
+| `anvil_delete_edge` | Remove block edges when unblocking |
+| `anvil_get_edges` | Query blockers and dependencies for a work item |
 
 ## Conversation State
 
@@ -37,7 +40,7 @@ On entry, read the current `conversation-state` note for this workspace:
 - If `status=active`: parse `## Decided` and `## Open Questions` sections from the body; read `last_skill`, `work_items` from fields. Use these to inform your work.
 - If not found: create new conversation-state (topic inferred, status=active, body with empty `## Decided`, `## Open Questions`, `## Handoff Note` sections)
 
-On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+On exit, update conversation-state body via `anvil_update_entity` with `body:` containing the full updated markdown:
 - Append decisions under `## Decided`
 - Remove resolved items from `## Open Questions`
 - Add new work item IDs to `work_items` field
@@ -112,7 +115,7 @@ Any other transition is invalid. If the user requests one, explain the valid opt
    - Priority (P0-P3, default P2-medium)
    - Dependencies (other work item IDs)
 
-5. **Create in Anvil** via `anvil_create_note`:
+5. **Create in Anvil** via `anvil_create_entity`:
    - Type: `story`
    - Fields: subtype, ceremony, status=draft (or in_progress for can_skip_to types), priority, project reference
    - Body: subtype-specific sections + History table
@@ -123,8 +126,8 @@ Any other transition is invalid. If the user requests one, explain the valid opt
 ### `transition` — Change Work Item Status
 
 1. **Validate the transition** against the state machine
-2. **Update via `anvil_update_note`:** Change status field, append to History table in body
-3. **Log in journal:** Create a journal entry via `anvil_create_note` noting the transition and reason
+2. **Update via `anvil_update_entity`:** Change status field, append to History table in body
+3. **Log in journal:** Create a journal entry via `anvil_create_entity` noting the transition and reason
 4. **Trigger downstream actions** based on new state:
    - `in_progress` → Inform user the developer skill can pick this up
    - `in_review` → Inform user the tester skill can verify this
@@ -133,7 +136,7 @@ Any other transition is invalid. If the user requests one, explain the valid opt
 
 ### `block` — Mark as Blocked (Flow 23)
 
-1. Transition status to `blocked` via `anvil_update_note`
+1. Transition status to `blocked` via `anvil_update_entity`
 2. Record blocker reason in work item body
 3. Create journal entry with `#blocker` tag
 4. If resolvable: suggest creating a new work item for the blocker itself
@@ -156,8 +159,8 @@ Call `anvil_query_view` with appropriate filters:
 
 ### `scope-change` — Handle Mid-Flight Scope Change (Flow 9)
 
-1. Log scope change in journal with `#scope-change` tag via `anvil_create_note`
-2. Update work item body with new/changed criteria via `anvil_update_note`
+1. Log scope change in journal with `#scope-change` tag via `anvil_create_entity`
+2. Update work item body with new/changed criteria via `anvil_update_entity`
 3. Note changes in History table
 4. If plan exists: developer skill revises plan (version bump)
 5. If scope grew significantly: suggest splitting into new work item

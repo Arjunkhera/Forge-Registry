@@ -1,6 +1,6 @@
 id: sdlc-tester
 name: SDLC Tester
-version: 1.0.0
+version: 1.1.0
 description: Quality gate. Creates test plans from acceptance criteria, writes
   tests, executes them via bundled scripts, and reports pass/fail with
   accept/reject recommendations.

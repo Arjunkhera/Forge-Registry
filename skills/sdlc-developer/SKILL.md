@@ -25,8 +25,8 @@ You are the implementation engine. You pick up work items, understand their requ
 | Tool | Purpose |
 |------|---------|
 | `anvil_get_note` | Read work item spec, plans |
-| `anvil_update_note` | Transition status, update plan progress |
-| `anvil_create_note` | Create plans, journal entries |
+| `anvil_update_entity` | Transition status, update plan progress |
+| `anvil_create_entity` | Create plans, journal entries |
 | `anvil_search` | Find related plans, existing work |
 | `knowledge_resolve_context` | Load repo profiles, architecture, conventions, build commands |
 | `forge_workspace_create` | Create managed workspace (plugins, MCP configs, env vars) |
@@ -44,7 +44,7 @@ On entry, read the current `conversation-state` note for this workspace:
 - If `status=active`: parse `## Decided` and `## Open Questions` sections from the body; read `last_skill`, `work_items` from fields. Use these to inform your work.
 - If not found: create new conversation-state (topic inferred, status=active, body with empty `## Decided`, `## Open Questions`, `## Handoff Note` sections)
 
-On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+On exit, update conversation-state body via `anvil_update_entity` with `body:` containing the full updated markdown:
 - Append decisions under `## Decided`
 - Remove resolved items from `## Open Questions`
 - Add new work item IDs to `work_items` field
@@ -89,8 +89,8 @@ Before creating a plan, verify the work item spec still matches the actual probl
 
 1. **Compare spec to observed reality** — is the described problem/feature still accurate given what you can see in the code and context?
 2. **If the spec is stale or incomplete:**
-   - Update the work item body via `anvil_update_note` with the reconciled spec
-   - Log a journal entry via `anvil_create_note` (type: journal, tag: `#deviation`) explaining what changed and why
+   - Update the work item body via `anvil_update_entity` with the reconciled spec
+   - Log a journal entry via `anvil_create_entity` (type: journal, tag: `#deviation`) explaining what changed and why
    - Proceed with the updated spec — never implement against a spec you know to be wrong
 3. **If the spec matches reality:** proceed directly to plan creation
 
@@ -104,17 +104,17 @@ For work items where `requires_plan: true` (feature, bugfix, refactor) and no ap
    - What each step accomplishes
    - Dependencies between steps
 3. **Identify risks and open questions**
-4. **Create plan in Anvil** via `anvil_create_note` with type `plan`:
+4. **Create plan in Anvil** via `anvil_create_entity` with type `plan`:
    - Fields: version="v1", approval="draft", work_item reference
    - Body: approach, numbered steps with checkboxes, risks, scope estimate
-   - **Note:** The `plan` type is provided by the `anvil-sdlc-v2` plugin. If `anvil_create_note` returns `TYPE_NOT_FOUND`, the plugin types may not be synced to this Anvil instance. Fallback: use `type: note` with `tags: ["plan"]` — all other fields remain the same. Log a warning journal entry noting the fallback.
+   - **Note:** The `plan` type is provided by the `anvil-sdlc-v2` plugin. If `anvil_create_entity` returns `TYPE_NOT_FOUND`, the plugin types may not be synced to this Anvil instance. Fallback: use `type: note` with `tags: ["plan"]` — all other fields remain the same. Log a warning journal entry noting the fallback.
 
 5. **Present for human approval**
 
 ### Phase 3: Human Approves Plan
 
 Wait for explicit approval. On approval:
-- Update plan: `approval: "approved"` via `anvil_update_note`
+- Update plan: `approval: "approved"` via `anvil_update_entity`
 - Proceed to implementation
 
 On rejection or modification:
@@ -170,13 +170,13 @@ This is a one-time cost per repo. All future work items on the same repo skip th
 For each plan step:
 
 1. **Implement the changes** in `sessionPath` following conventions from Vault
-2. **Update plan progress** via `anvil_update_note`:
+2. **Update plan progress** via `anvil_update_entity`:
    - Current step: ✅ done → 🔄 in progress → ⬜ pending
 3. **Commit** using conventional commit format:
    - Stage changes, then run `.forge/scripts/commit.sh <type> <scope> <description>` inside `sessionPath`
    - Example: `.forge/scripts/commit.sh feat forge "add commit.sh to session scripts"`
    - One commit per logical change
-4. **Log any deviations** in work item journal via `anvil_create_note` (journal type) with `#deviation` tag
+4. **Log any deviations** in work item journal via `anvil_create_entity` (journal type) with `#deviation` tag
 
 ### Phase 6: Self-Review
 
@@ -195,7 +195,7 @@ Before transitioning to `in_review`:
 
 1. **Run tester before requesting review.** Invoke the `sdlc-tester` skill against this work item. Do not proceed to review if tests fail — fix the failures first and re-run.
 
-2. **Update work item status** to `in_review` via `anvil_update_note` only after tester passes.
+2. **Update work item status** to `in_review` via `anvil_update_entity` only after tester passes.
 
 > **Next step:** Invoke the `sdlc-reviewer` skill for code review and PR creation.
 
@@ -245,7 +245,7 @@ When a session restarts, MCP connections (Anvil, Vault, Forge) drop silently. St
 2. **Re-read the plan** via `anvil_search` — check which steps are marked done (✅) vs pending (⬜).
 3. **Check for recent journal entries** via `anvil_search` — any entries logged in the previous session are still there.
 4. **Re-apply any terminal steps that were missed:**
-   - Status transition (e.g., `in_review`) — re-apply via `anvil_update_note` if the work item is still in a prior state
+   - Status transition (e.g., `in_review`) — re-apply via `anvil_update_entity` if the work item is still in a prior state
    - PR link — re-add to work item history if it was created but not recorded
 5. **Confirm with the user** what state was recovered before continuing.
 
@@ -253,7 +253,7 @@ When a session restarts, MCP connections (Anvil, Vault, Forge) drop silently. St
 
 Whenever you deviate from the plan:
 
-1. Create journal entry via `anvil_create_note`:
+1. Create journal entry via `anvil_create_entity`:
    - Type: journal
    - Tags: #deviation, work-item reference
    - Body: original plan, actual approach, reasoning

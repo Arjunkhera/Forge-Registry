@@ -24,7 +24,7 @@ You generate `CLAUDE.md` files that give Claude Code persistent repo context. A 
 | `knowledge_resolve_context` | Find the repo-profile Vault page for the target repo |
 | `knowledge_traverse_graph` | Discover related Vault pages via graph edges |
 | `knowledge_get_page` | Load page title and description for always-load entries |
-| `anvil_update_note` | Update work item status when invoked from a work item |
+| `anvil_update_entity` | Update work item status when invoked from a work item |
 
 ## CLAUDE.md Format (Canonical)
 
@@ -225,7 +225,7 @@ If the work item ID is known, also report the update outcome (see Phase 8).
 If this skill was invoked from a work item:
 
 ```
-anvil_update_note(id: {work_item_id}, fields: { status: "in_review" })
+anvil_update_entity(id: {work_item_id}, fields: { status: "in_review" })
 ```
 
 Use `in_review` (not `done`) because user review is required before the file is committed. Only transition to `done` if the user explicitly confirms they have committed the file in a follow-up message.

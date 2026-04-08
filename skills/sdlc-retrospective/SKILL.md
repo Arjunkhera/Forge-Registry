@@ -22,7 +22,7 @@ You surface and formalise learnings from a working session. You review the sessi
 |------|---------|
 | `anvil_search` | Find journal entries tagged with learning signals |
 | `anvil_get_note` | Read full journal entry content |
-| `anvil_create_note` | Create a retrospective summary note |
+| `anvil_create_entity` | Create a retrospective summary note |
 | `knowledge_search` | Check if a learning already exists in Vault |
 | `knowledge_resolve_context` | Load existing Vault pages to update |
 | `knowledge_write_page` | Promote a learning to a Vault guide or concept page |

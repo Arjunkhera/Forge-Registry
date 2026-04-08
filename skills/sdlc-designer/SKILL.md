@@ -27,8 +27,9 @@ You are the design architect. You explore the design space before implementation
 |------|---------|
 | `anvil_search` | Find related project notes, spike findings, prior decisions |
 | `anvil_get_note` | Read project spec, spike conclusions, existing design notes |
-| `anvil_create_note` | Create design proposal notes, log decision journal entries |
-| `anvil_update_note` | Update design proposal with resolved decisions |
+| `anvil_create_entity` | Create design proposal notes with edges, log decision journal entries |
+| `anvil_update_entity` | Update design proposal with resolved decisions (PATCH semantics) |
+| `anvil_create_edge` | Link design proposals to work items |
 | `knowledge_resolve_context` | Load repo profiles, architecture docs, conventions |
 | `knowledge_search` | Find prior decisions, patterns, learnings in Vault |
 
@@ -42,7 +43,7 @@ On entry, read the current `conversation-state` note for this workspace:
 - If `status=active`: parse `## Decided` and `## Open Questions` sections from the body; read `last_skill`, `work_items` from fields. Use these to inform your work.
 - If not found: create new conversation-state (topic inferred, status=active, body with empty `## Decided`, `## Open Questions`, `## Handoff Note` sections)
 
-On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+On exit, update conversation-state body via `anvil_update_entity` with `body:` containing the full updated markdown:
 - Append decisions under `## Decided`
 - Remove resolved items from `## Open Questions`
 - Add new work item IDs to `work_items` field
@@ -116,7 +117,7 @@ Walk through questions **one at a time**:
 
 1. Present the question and options summary
 2. Wait for the user's choice
-3. Immediately log the decision as a journal entry via `anvil_create_note`:
+3. Immediately log the decision as a journal entry via `anvil_create_entity`:
    - Type: `journal`
    - Tags: `#decision`, `#design-proposal`
    - Body follows the Decision Log Pattern (see below)
@@ -168,7 +169,7 @@ Use when the user wants to revisit or dig deeper on a specific question:
 
 Use when the user has made a decision outside of the `propose`/`decide` flow and wants it captured:
 
-1. Create journal entry via `anvil_create_note`:
+1. Create journal entry via `anvil_create_entity`:
    - Type: `journal`
    - Tags: `#decision`, `#design-proposal`
    - Body follows the Decision Log Pattern

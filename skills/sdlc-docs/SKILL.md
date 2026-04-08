@@ -23,8 +23,8 @@ You maintain the living documentation for the SDLC system. Documentation is not 
 |------|---------|
 | `anvil_get_note` | Read work items, plans (to assess doc needs) |
 | `anvil_search` | Find completed work items, existing ADRs |
-| `anvil_create_note` | Create ADR notes, journal entries |
-| `anvil_update_note` | Update ADR status |
+| `anvil_create_entity` | Create ADR notes, journal entries |
+| `anvil_update_entity` | Update ADR status |
 | `knowledge_search` | Search existing Vault knowledge |
 | `knowledge_resolve_context` | Load existing repo profiles, architecture docs |
 | `knowledge_validate_page` | Validate proposed page against Vault schema |
@@ -43,7 +43,7 @@ On entry, read the current `conversation-state` note for this workspace:
 - If `status=active`: parse `## Decided` and `## Open Questions` sections from the body; read `last_skill`, `work_items` from fields. Use these to inform your work.
 - If not found: create new conversation-state (topic inferred, status=active, body with empty `## Decided`, `## Open Questions`, `## Handoff Note` sections)
 
-On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+On exit, update conversation-state body via `anvil_update_entity` with `body:` containing the full updated markdown:
 - Append decisions under `## Decided`
 - Remove resolved items from `## Open Questions`
 - Add new work item IDs to `work_items` field
@@ -87,7 +87,7 @@ Wait for the synthesized briefing before proceeding. Use only the briefing — d
    - `guide` pages — how to set up, how to contribute, how to test
    - `procedure` pages — build process, deploy process
 
-6. **Log exploration notes** in project scratch via `anvil_create_note` (journal type)
+6. **Log exploration notes** in project scratch via `anvil_create_entity` (journal type)
 
 ### `adr-create` — Create Architecture Decision Record
 
@@ -101,7 +101,7 @@ Create an ADR when a significant technical decision is made:
    - Alternatives considered and why rejected
    - Consequences (positive, negative, neutral)
    - Related work items or ADRs
-3. **Create ADR in Anvil** via `anvil_create_note`:
+3. **Create ADR in Anvil** via `anvil_create_entity`:
    - Type: `note` (with ADR convention in title/tags)
    - Tags: #adr, #decision, project reference
    - Body: ADR template (Status, Context, Decision, Alternatives, Consequences)

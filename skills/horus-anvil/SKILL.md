@@ -14,13 +14,13 @@ Anvil is the live state system. All structured data (tasks, notes, journals, sto
 
 | Tool | Purpose | Key Parameters |
 |------|---------|---------------|
-| `anvil_create_note` | Create a new note | `type` (required), `title` (required), `fields` (type-specific), `content` (markdown body), `use_template` (default: true) |
+| `anvil_create_entity` | Create a new note | `type` (required), `title` (required), `fields` (type-specific), `content` (markdown body), `use_template` (default: true) |
 | `anvil_get_note` | Retrieve a note by ID with relationships | `noteId` (UUID) |
-| `anvil_update_note` | Update a note (PATCH semantics) | `noteId` (required), `fields` (partial), `content` (replaces body; appends for journals) |
+| `anvil_update_entity` | Update a note (PATCH semantics) | `noteId` (required), `fields` (partial), `content` (replaces body; appends for journals) |
 | `anvil_search` | Free-text + filtered search | `query`, `type`, `tags` (AND), `status`, `priority`, `due`, `assignee`, `project`, `scope`, `limit`, `offset` |
 | `anvil_query_view` | Structured query with rendered output | `view` (required: list/table/board), `filters`, `orderBy`, `columns` (table), `groupBy` (required for board), `limit`, `offset` |
 | `anvil_list_types` | List all available note types with full schema | (none) |
-| `anvil_get_related` | Get forward links and backlinks for a note | `noteId` (UUID) |
+| `anvil_get_edges` | Get forward links and backlinks for a note | `noteId` (UUID) |
 | `anvil_sync_pull` | Pull latest from remote git repo | `remote` (default: origin), `branch` |
 | `anvil_sync_push` | Stage .md + type files, commit, and push | `message` (required) |
 
@@ -85,7 +85,7 @@ _core (implicit base — noteId, type, title, created, modified, tags, related, 
 
 1. Call `anvil_list_types` to discover available types and their fields
 2. Pick the correct type based on what the user wants to create
-3. Call `anvil_create_note` with:
+3. Call `anvil_create_entity` with:
    - `type`: The type ID from step 1
    - `title`: User-provided title
    - `fields`: Only fields that are valid for this type (from step 1)
@@ -180,7 +180,7 @@ Notes link to each other through:
 - **Body wiki-links**: `[[mentions]]` extracted from markdown body (skipping code blocks)
 - **Typed reference fields**: e.g., `assignee` → person, `project` → project
 
-Use `anvil_get_related` to discover:
+Use `anvil_get_edges` to discover:
 - **Forward links**: References this note makes (grouped by relation type)
 - **Reverse links / backlinks**: Notes that reference this one
 
