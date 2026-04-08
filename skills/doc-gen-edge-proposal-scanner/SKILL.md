@@ -23,7 +23,7 @@ You scan a source repository and detect all five knowledge graph edge types: `PA
 | `knowledge_resolve_context` | Resolve Vault page IDs for repos by name (for edge target validation) |
 | `knowledge_get_edges` | Check existing edges before writing to prevent duplicates |
 | `knowledge_create_edge` | Write each detected edge to Neo4j |
-| `anvil_update_note` | Update work item status when invoked from a work item |
+| `anvil_update_entity` | Update work item status when invoked from a work item |
 
 ## Core Workflow
 
@@ -257,18 +257,18 @@ If this skill was invoked from a work item:
 
 **On full success (all candidates written or intentionally skipped):**
 ```
-anvil_update_note(id: {work_item_id}, fields: { status: "done" })
+anvil_update_entity(id: {work_item_id}, fields: { status: "done" })
 ```
 
 **On partial failure (some writes failed):**
 ```
-anvil_update_note(id: {work_item_id}, fields: { status: "in_review" })
+anvil_update_entity(id: {work_item_id}, fields: { status: "in_review" })
 ```
 Include a note in the work item's notes field listing which edges failed and the error messages.
 
 **On total failure (session setup failed or no Vault page found for source repo):**
 ```
-anvil_update_note(id: {work_item_id}, fields: { status: "blocked" })
+anvil_update_entity(id: {work_item_id}, fields: { status: "blocked" })
 ```
 
 ## Handling Edge Cases

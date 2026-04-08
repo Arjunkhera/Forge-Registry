@@ -26,7 +26,7 @@ You analyze a source repository via a Forge code session and produce a `repo-pro
 | `knowledge_write_page` | Write the page via git workflow (branch → commit → PR) |
 | `knowledge_registry_add` | Register the repo (with aliases) in the repos registry via PR |
 | `knowledge_create_edge` | Create a `DOCS` edge linking the page to the repo node |
-| `anvil_update_note` | Update work item status when invoked from a work item |
+| `anvil_update_entity` | Update work item status when invoked from a work item |
 
 ## Core Workflow
 
@@ -240,7 +240,7 @@ If `knowledge_create_edge` is unavailable or returns an error, log the failure a
 If this skill was invoked from a work item:
 
 ```
-anvil_update_note(id: {work_item_id}, fields: { status: "done" })
+anvil_update_entity(id: {work_item_id}, fields: { status: "done" })
 ```
 
 Only transition to `done` if the Vault page was successfully written. If the write failed, set status to `in_review` and include a note explaining the failure.

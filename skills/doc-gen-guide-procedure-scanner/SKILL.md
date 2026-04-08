@@ -26,7 +26,7 @@ You analyze a source repository via a Forge code session and produce one or more
 | `knowledge_validate_page` | Validate each page against schema before writing |
 | `knowledge_write_page` | Write each page via git workflow (branch → commit → PR) |
 | `knowledge_create_edge` | Create a `DOCS` edge linking each page to the repo node |
-| `anvil_update_note` | Update work item status when invoked from a work item |
+| `anvil_update_entity` | Update work item status when invoked from a work item |
 
 ## Core Workflow
 
@@ -274,16 +274,16 @@ If this skill was invoked from a work item:
 
 - If **all pages** were written successfully:
   ```
-  anvil_update_note(id: {work_item_id}, fields: { status: "done" })
+  anvil_update_entity(id: {work_item_id}, fields: { status: "done" })
   ```
 - If **some pages** failed:
   ```
-  anvil_update_note(id: {work_item_id}, fields: { status: "in_review" })
+  anvil_update_entity(id: {work_item_id}, fields: { status: "in_review" })
   ```
   Include a note listing which pages failed and why.
 - If **no candidates** were found:
   ```
-  anvil_update_note(id: {work_item_id}, fields: { status: "in_review" })
+  anvil_update_entity(id: {work_item_id}, fields: { status: "in_review" })
   ```
   Include a note: "No guide or procedure candidates detected."
 

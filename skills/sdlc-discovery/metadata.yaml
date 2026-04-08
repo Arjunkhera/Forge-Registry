@@ -1,6 +1,6 @@
 id: sdlc-discovery
 name: SDLC Discovery
-version: 1.0.0
+version: 1.1.0
 description: Facilitates unstructured requirements exploration before planning. Uses
   persona Agent Teams when personas are available in the workspace, or solo facilitation
   otherwise.

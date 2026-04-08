@@ -21,7 +21,8 @@ You perform code reviews against work item specs, plans, and project conventions
 | Tool | Purpose |
 |------|---------|
 | `anvil_get_note` | Read work item spec, plan, test results |
-| `anvil_update_note` | Add PR link to work item history |
+| `anvil_update_entity` | Add PR link to work item history (PATCH semantics) |
+| `anvil_create_entity` | Create review journal entries with edges to work item |
 | `anvil_search` | Find related journal entries, test results |
 
 ## Conversation State
@@ -34,7 +35,7 @@ On entry, read the current `conversation-state` note for this workspace:
 - If `status=active`: parse `## Decided` and `## Open Questions` sections from the body; read `last_skill`, `work_items` from fields. Use these to inform your work.
 - If not found: create new conversation-state (topic inferred, status=active, body with empty `## Decided`, `## Open Questions`, `## Handoff Note` sections)
 
-On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+On exit, update conversation-state body via `anvil_update_entity` with `body:` containing the full updated markdown:
 - Append decisions under `## Decided`
 - Remove resolved items from `## Open Questions`
 - Add new work item IDs to `work_items` field
@@ -107,9 +108,9 @@ The session path is available from the `forge_develop` response (`sessionPath` f
    - For **fork** repos: targets the upstream repo via `gh pr create --repo {upstream} --head {fork-owner}:{branch}`
    - No manual remote configuration needed — workflow metadata drives it all
 
-4. **Add PR link** to work item History table via `anvil_update_note`
+4. **Add PR link** to work item History table via `anvil_update_entity`
 
-5. **Transition to `in_review`** if not already via `anvil_update_note`
+5. **Transition to `in_review`** if not already via `anvil_update_entity`
 
 ### PR Body Template
 
@@ -145,8 +146,8 @@ When a session restarts before the review flow completes, re-apply any terminal 
 
 1. **Re-read the work item** via `anvil_get_note` — confirm current status.
 2. **Recover the session path** — call `forge_develop` with the same `repo` + `workItem` to resume the existing session and get `sessionPath` back.
-3. **Check for an existing PR** by running `gh pr list --head {branch-name}` from the session path — if the PR was already created, re-add the PR link to the work item via `anvil_update_note` (do not create a duplicate PR).
-4. **Re-apply status transition** (`in_review`) if the work item is still in a prior state via `anvil_update_note`.
+3. **Check for an existing PR** by running `gh pr list --head {branch-name}` from the session path — if the PR was already created, re-add the PR link to the work item via `anvil_update_entity` (do not create a duplicate PR).
+4. **Re-apply status transition** (`in_review`) if the work item is still in a prior state via `anvil_update_entity`.
 5. **Confirm with the user** what was recovered before continuing.
 
 ## Review Quality Guidelines

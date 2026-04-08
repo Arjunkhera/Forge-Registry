@@ -36,7 +36,7 @@ Before doing anything else, read the conversation-state for the current workspac
    | `status: active` | Parse `## Decided` and `## Open Questions` sections from the note **body**; read `last_skill`, `work_items` from **fields**. Use these to inform routing and responses throughout the session. |
    | Not found | Create a new conversation-state note: infer `topic` from the user's first message, set `status: active`. Body should contain empty `## Decided`, `## Open Questions`, and `## Handoff Note` sections. Proceed normally. |
 
-3. **Keep state in working memory** for the duration of the session. Update it via `anvil_update_note` with `body:` containing the full updated markdown whenever meaningful state changes (e.g., a routing decision is made, a skill hands off, a work item is identified). Update metadata fields (`last_skill`, `work_items`, `status`) via the `fields` parameter.
+3. **Keep state in working memory** for the duration of the session. Update it via `anvil_update_entity` with `body:` containing the full updated markdown whenever meaningful state changes (e.g., a routing decision is made, a skill hands off, a work item is identified). Update metadata fields (`last_skill`, `work_items`, `status`) via the `fields` parameter.
 
 ## Core Responsibilities
 
@@ -53,7 +53,7 @@ Before doing anything else, read the conversation-state for the current workspac
 | `anvil_search` | Find work items, plans, journals across projects |
 | `anvil_query_view` | Board views with groupBy, table views, list views |
 | `anvil_get_note` | Read specific notes for detail |
-| `anvil_get_related` | Follow links between notes |
+| `anvil_get_edges` | Query typed edges between entities (blocks, references, mentions) |
 | `knowledge_search` | Search Vault for architecture docs, learnings, guides |
 | `knowledge_resolve_context` | Load targeted context for specific repos/scopes |
 | `forge_session_list` | List active code sessions across repos and work items |
@@ -69,7 +69,7 @@ On entry, read the current `conversation-state` note for this workspace:
 - If `status=active`: parse `## Decided` and `## Open Questions` from the body; read `last_skill`, `work_items` from fields
 - If not found: create new conversation-state (topic inferred, status=active, body with empty section headers)
 
-On exit, update conversation-state body via `anvil_update_note` with `body:` containing the full updated markdown:
+On exit, update conversation-state body via `anvil_update_entity` with `body:` containing the full updated markdown:
 - Append decisions under `## Decided`
 - Remove resolved items from `## Open Questions`
 - Add new work item IDs to `work_items` field
@@ -108,7 +108,7 @@ Display a kanban-style board for a single project:
 ### `program-status` — Program-Level View (Flow 20)
 
 1. Read program note via `anvil_get_note`
-2. Get linked projects via `anvil_get_related`
+2. Get linked projects via `anvil_get_edges`
 3. For each project, call `anvil_query_view` to aggregate work item counts by status
 4. Calculate phase progress (% done per phase)
 5. Surface blockers across all projects
@@ -146,7 +146,7 @@ Scan for cleanup candidates across work items, workspaces, and code sessions:
 4. Present release plan for human approval
 5. Execute: version bump, git tag, push
 6. Trigger documentation sweep (→ docs skill)
-7. Log release in project scratch via `anvil_create_note` (journal type)
+7. Log release in project scratch via `anvil_create_entity` (journal type)
 
 ## Command Routing
 

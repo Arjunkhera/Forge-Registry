@@ -27,8 +27,8 @@ Conversation-state notes store **metadata in frontmatter fields** (`status`, `la
 
 | Tool | Purpose |
 |------|---------|
-| `anvil_create_note` | Create conversation-state note at session start |
-| `anvil_update_note` | Append to decided/open lists, write handoff note, update status |
+| `anvil_create_entity` | Create conversation-state note at session start |
+| `anvil_update_entity` | Append to decided/open lists, write handoff note, update status |
 | `anvil_get_note` | Read existing conversation-state to resume a paused session |
 | `anvil_search` | Check for existing conversation-state for this topic |
 
@@ -40,7 +40,7 @@ At the start of every discovery session:
    - If found and status is `paused`: read the note, parse the `## Handoff Note` section from the body, surface it to the user, and ask whether to resume or start fresh.
    - If not found: create a new one (step 2).
 
-2. **Create a conversation-state note** via `anvil_create_note`:
+2. **Create a conversation-state note** via `anvil_create_entity`:
    - Frontmatter fields: type: `conversation-state`, status: `active`, topic: the discussion subject (extracted from the user's message), last_skill: `sdlc-discovery`
    - Body: include `## Decided` and `## Open Questions` sections (initially empty)
 
@@ -126,13 +126,13 @@ In both modes, maintain the conversation-state note in Anvil throughout the sess
 
 ### When a decision is made
 
-A decision is made when the user (or the team) reaches clear agreement on something. Update the conversation-state via `anvil_update_note`:
+A decision is made when the user (or the team) reaches clear agreement on something. Update the conversation-state via `anvil_update_entity`:
 - Append to the `## Decided` section in the body: a concise statement of what was decided (e.g. "use React for the frontend", "target non-technical users", "MVP scope is X")
 - Set `last_skill: sdlc-discovery`
 
 ### When a question is left open
 
-An open question is one where discussion reveals uncertainty with no resolution. Update the conversation-state via `anvil_update_note`:
+An open question is one where discussion reveals uncertainty with no resolution. Update the conversation-state via `anvil_update_entity`:
 - Append to the `## Open Questions` section in the body: a concise statement of the unresolved question (e.g. "auth model undecided", "no user stories yet", "third-party integration cost unknown")
 
 ### Periodic surfacing
@@ -201,7 +201,7 @@ When surfacing a routing suggestion, use this logic:
 
 When the user wants to pause (says "pause", "stop for now", "let's come back to this", "save this"):
 
-1. Write the handoff content under the `## Handoff Note` section in the body of the conversation-state note via `anvil_update_note`:
+1. Write the handoff content under the `## Handoff Note` section in the body of the conversation-state note via `anvil_update_entity`:
    - Summarise: what was covered, what was decided, what remains open, suggested next step
    - Format the body section as:
      ```
