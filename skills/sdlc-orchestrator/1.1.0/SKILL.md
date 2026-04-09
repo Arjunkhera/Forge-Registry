@@ -175,6 +175,13 @@ When the user gives a command, determine which skill should handle it:
 | "Clean up old work" | **orchestrator** → clean |
 | "What did we learn?", "retrospective", "wrap up session" | **retrospective** skill → summarize |
 
+### Code Access Routing
+
+When routing to any skill that will investigate code (developer, designer, tester):
+- Remind the downstream skill to use Vault first, then the managed clone pool
+- If you know which repo is relevant, include the `forge_repo_resolve` path in the handoff
+- Never pass host-mounted source repo paths to downstream skills
+
 ### Pulse-Check Phrase Detection
 
 Recognize when the user is asking for orientation rather than giving a specific command. Trigger phrases include:

@@ -262,6 +262,42 @@ Skills and plugins are compiled differently per target:
 - **claude-code**: emits to `.claude/` directory
 - **cursor**: emits to `.cursor/rules/` as `.mdc` files
 
+## Code Access Rules
+
+When investigating or reading source code, always follow this hierarchy:
+
+### 1. Vault First — Conceptual Understanding
+Before reading raw source code, check Vault for existing knowledge:
+- `knowledge_resolve_context(repo: "<name>")` — returns repo profile, architecture, conventions, related guides
+- `knowledge_search(query: "<topic>")` — finds guides, procedures, learnings across the knowledge base
+
+Vault pages are maintained, verified, and structured. Raw source code requires you to re-derive context that may already be documented.
+
+### 2. Managed Clone Pool — Current Source Code
+When you need to read actual source files:
+- Call `forge_repo_resolve(name: "<repo>")` to find the repo in the managed clone pool
+- Read files from the returned path (under `~/Horus/data/horus-repos/`)
+- This pool is maintained by Forge and is the canonical source for agent reads
+
+### 3. Code Sessions — Writing Code
+When you need to write or modify code:
+- Call `forge_develop(repo: "<name>", workItem: "<id>")` to create an isolated git worktree
+- All edits go in the returned `sessionPath`
+- Never write to the managed clone pool or source repos
+
+### What Is Blocked
+
+A `PreToolUse` hook blocks `Read`, `Glob`, and `Grep` operations on files in the host-mounted source repos path. If you see a "BLOCKED: Cannot read files from source repository" error, follow the guidance in the error message.
+
+### Subagent Briefing
+
+When spawning Explore or research subagents to investigate code:
+- **Always** provide the managed clone pool path from `forge_repo_resolve`, not a source repo path
+- **Never** let subagents discover paths on their own — they will find the host-mounted source repos and read stale code
+- **Include** the repo path in your subagent prompt: "Search in /Users/.../horus-repos/Horus for..."
+
+This is critical — the original incident that motivated these rules was caused by a subagent reading stale code from the host mount.
+
 ## When to Use Forge vs Direct Git
 
 | Scenario | Use |
