@@ -24,14 +24,14 @@ Horus supports multiple vault instances (e.g., `personal` and `work`). All tools
 |------|---------|---------------|
 | `knowledge_resolve_context` | Get all applicable pages for a repo | `repo` (required), `include_full` (default: false), `vault` |
 | `knowledge_search` | Hybrid search (keyword + semantic + reranking) | `query` (required), `scope` ({program, repo}), `type`, `mode`, `limit`, `vault` |
-| `knowledge_get_page` | Read a full page by ID | `id` (required), `vault` |
-| `knowledge_get_related` | Follow links from a page | `id` (required), `vault` |
+| `knowledge_get_page` | Read a full page by ID (UUID or file path) | `id` (required), `vault` |
+| `knowledge_get_related` | Follow links from a page (UUID or file path) | `id` (required), `vault` |
 | `knowledge_list_by_scope` | Browse pages by scope, mode, type, tags | `scope` ({program, repo}), `type`, `mode`, `tags`, `limit`, `vault` |
 | `knowledge_validate_page` | Validate page against schema + registries | `content` (full markdown with frontmatter), `vault` |
 | `knowledge_suggest_metadata` | Auto-suggest frontmatter fields | `content` (markdown), `hints`, `vault` |
 | `knowledge_check_duplicates` | Check overlap with existing pages | `title`, `content`, `threshold` (0-1, default: 0.75), `vault` |
 | `knowledge_get_schema` | Get schema definition + registry contents | `vault` (defaults to default vault) |
-| `knowledge_write_page` | Write page via git (branch → commit → PR) | `path` (required), `content` (required), `pr_title`, `pr_body`, `commit_message`, `vault` |
+| `knowledge_write_page` | Write page via git (UUID auto-generated if missing) | `path` (required), `content` (required), `pr_title`, `pr_body`, `commit_message`, `vault` |
 | `knowledge_registry_add` | Add entry to a registry | `registry` (tags/repos/programs), `entry` ({id, description?, aliases?}), `vault` |
 
 ### The `vault` parameter
@@ -42,6 +42,10 @@ All tools accept an optional `vault` string (e.g., `"personal"`, `"work"`):
 - **Specified on read tools** → restrict to that vault only
 - **Omitted on write/routed tools** → UUID registry lookup (for existing pages) or default vault (for new pages)
 - **Specified on write/routed tools** → route directly to that vault
+
+## Page Identity
+
+Every knowledge page has a **UUIDv4 `id`** in its YAML frontmatter as its primary identifier. All tools that accept a page `id` parameter accept either a UUID (e.g., `550e8400-e29b-41d4-a716-446655440000`) or a file path (e.g., `repos/anvil.md`). Search results and page summaries return the UUID as `id` and the file path as `path`. New pages get a UUID auto-generated on write.
 
 ## Page Types
 
@@ -85,6 +89,7 @@ When resolving context for a repo:
 
 ```yaml
 ---
+id: 550e8400-e29b-41d4-a716-446655440000  # UUIDv4 (auto-generated if missing)
 title: Deployment Guide                    # Required, max 120 chars
 type: guide                                 # Required (one of the 6 types)
 mode: operational                           # Required (reference/operational/keystone)
