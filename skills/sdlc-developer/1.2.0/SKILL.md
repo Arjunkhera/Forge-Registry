@@ -63,6 +63,14 @@ When `forge_develop` creates or resumes a session, it installs enforcement scrip
 
 **The SKILL.md decides WHEN to call scripts. Scripts handle the mechanical execution.**
 
+## Code Access Constraints
+
+**Investigation reads:** When examining code before or during implementation (e.g., reading related modules, checking call sites), read from the session path if you have an active session, or from the managed clone pool via `forge_repo_resolve`. Never read from the host-mounted source repos — they may be stale.
+
+**Subagent investigation:** If you delegate code exploration to a subagent, provide the session path or managed clone path explicitly. Do not let subagents resolve paths independently.
+
+**Vault context:** Always load Vault context via `knowledge_resolve_context` before reading source files. Vault may already contain the architectural understanding you need.
+
 ## Core Workflow
 
 ### Phase 1: Load Context (via sdlc-gather-context)

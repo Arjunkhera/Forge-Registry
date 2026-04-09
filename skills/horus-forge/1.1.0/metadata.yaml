@@ -1,6 +1,6 @@
 id: horus-forge
 name: Horus Forge
-version: 1.0.0
+version: 1.1.0
 description: >
   Forge MCP reference skill. Covers all 15 Forge tools: context-only workspaces,
   code sessions (forge_develop), session cleanup, repository index, git workflow
