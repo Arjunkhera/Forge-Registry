@@ -1,0 +1,16 @@
+id: sdlc-developer
+name: SDLC Developer
+version: 1.2.0
+description: Implementation engine. Plan, approve, and implement work items with
+  Vault context, Forge workspace bootstrapping, and deterministic git operations
+  via bundled scripts.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - developer
+  - implementation
+dependencies: {}
+files: []
