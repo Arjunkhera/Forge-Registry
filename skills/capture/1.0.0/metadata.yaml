@@ -1,0 +1,16 @@
+id: capture
+name: Capture
+version: 1.0.0
+description: >
+  Two-mode task capture skill for personal task management. Quick mode dumps
+  to Inbox instantly. Guided mode infers structure and confirms before saving.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - anvil
+  - personal-tasks
+  - capture
+dependencies: {}
+files: []

@@ -33,13 +33,16 @@ The type system is dynamic and supports single inheritance (max 3 levels deep). 
 ```
 _core (implicit base — noteId, type, title, created, modified, tags, related, scope)
   ├── note       (generic note)
-  ├── task       (status, priority, due, effort, assignee, project)
+  ├── task       (status, priority, due, effort, assignee, project, recurrence, last_swept_at)
   │   └── story  (acceptance_criteria, story_points — extends task)
   ├── journal    (append-only behavior)
   ├── project    (project container)
-  ├── person     (contact)
+  ├── person     (contact — email, team, role, birthday)
   ├── service    (external service)
-  └── meeting    (meeting record)
+  ├── meeting    (meeting record)
+  ├── area       (life area — description)
+  ├── view       (saved query — query, format, group_by, sort_by, description)
+  └── dashboard  (view collection — description, layout)
 ```
 
 ### Core Fields (on every note)
@@ -215,6 +218,45 @@ Fetches from remote and merges. Prefers fast-forward; falls back to regular merg
 | `IMMUTABLE_FIELD` | Tried to change a read-only field | Remove that field from the update payload |
 | `CONFLICT` | Merge conflict on sync pull | Resolve conflict markers manually |
 | `SYNC_ERROR` | Git operation failed | Check remote connectivity |
+
+## Personal Task Management
+
+Anvil supports a personal task management system with areas, views, dashboards, and recurring tasks. Two companion skills handle common workflows:
+
+### Areas
+Areas are typed nodes (`type: area`) representing life contexts — Personal, Office, Health, Finance, Inbox. Tasks link to areas via `belongs_to` edges. Use `anvil_search({ type: "area" })` to list all areas.
+
+### Capture & Triage
+- When the user wants to **capture a task or thought**: invoke the `/capture` skill. It handles quick (dump to Inbox) and guided (infer + confirm) modes.
+- When the user wants to **clear their inbox** or **triage items**: invoke the `/triage` skill. It walks through inbox items and helps reclassify them.
+
+### Edge Intents for Task Management
+| Intent | Direction | Inverse | Use Case |
+|--------|-----------|---------|----------|
+| `parent_of` | directional | `child_of` | Structural hierarchy — project→task, task→subtask, dashboard→view |
+| `belongs_to` | directional | `contains` | Membership — task→area, note→area |
+| `blocks` | directional | `blocked_by` | Dependency — task blocks another task |
+| `mentions` | bidirectional | — | General association |
+| `references` | directional | `referenced_by` | Formal citation |
+
+### Additional Tools
+| Tool | Purpose |
+|------|---------|
+| `anvil_execute_view` | Execute a saved view node's query and return results |
+| `anvil_get_children` | Get direct children of an entity (default intent: `parent_of`) |
+| `anvil_get_subtree` | Get recursive descendants with depth info |
+| `anvil_recurrence_sweep` | Generate next instances for completed recurring tasks |
+| `anvil_setup_personal_tasks` | Create default areas, views, and dashboard (idempotent) |
+
+### Views & Dashboards
+- **Views** (`type: view`) are saved query definitions with `query`, `format`, `group_by`, `sort_by` fields
+- **Dashboards** (`type: dashboard`) compose multiple views via `parent_of` edges
+- Execute a view: `anvil_execute_view({ viewId: "<uuid>" })`
+- Default views: Today, Inbox, Upcoming, Weekly Review, Waiting On
+- Default dashboard: Morning Briefing
+
+### Recurring Tasks
+Tasks with a `recurrence` field (daily/weekly/biweekly/monthly/quarterly/yearly) auto-generate the next instance when completed via `anvil_recurrence_sweep`.
 
 ## Known Gotchas
 
