@@ -16,15 +16,19 @@ Vault is the knowledge base. It stores long-lived, structured documentation abou
 |------|---------|---------------|
 | `knowledge_resolve_context` | Get all applicable pages for a repo | `repo` (required), `include_full` (default: false) |
 | `knowledge_search` | Hybrid search (keyword + semantic + reranking) | `query` (required), `scope` ({program, repo}), `type`, `mode`, `limit` |
-| `knowledge_get_page` | Read a page by ID (file path) | `id` (e.g., `repos/anvil.md`) |
-| `knowledge_get_related` | Follow links from a page | `id` (source page) |
+| `knowledge_get_page` | Read a page by ID (UUID or file path) | `id` (UUID or path, e.g., `repos/anvil.md`) |
+| `knowledge_get_related` | Follow links from a page | `id` (UUID or file path) |
 | `knowledge_list_by_scope` | Browse pages for a program/repo | `scope` ({program, repo}), `type`, `mode`, `tags`, `limit` |
 | `knowledge_validate_page` | Validate page against schema | `content` (full markdown with YAML frontmatter) |
 | `knowledge_suggest_metadata` | Auto-suggest frontmatter fields | `content` (markdown), `hints` (optional partial knowledge) |
 | `knowledge_check_duplicates` | Check overlap with existing pages | `title`, `content`, `threshold` (0-1, default: 0.75) |
 | `knowledge_get_schema` | Get full schema + registry contents | (none) |
 | `knowledge_registry_add` | Add tag/repo/program to a registry | `registry` (tags/repos/programs), `entry` ({id, description?, aliases?}) |
-| `knowledge_write_page` | Write page, commit to branch, open PR | `path` (required), `content` (required), `pr_title`, `pr_body`, `commit_message` |
+| `knowledge_write_page` | Write page, commit to branch, open PR (UUID auto-generated) | `path` (required), `content` (required), `pr_title`, `pr_body`, `commit_message` |
+
+## Page Identity
+
+Every knowledge page has a **UUIDv4 `id`** in its YAML frontmatter as its primary identifier. All tools that accept a page `id` parameter accept either a UUID (e.g., `550e8400-e29b-41d4-a716-446655440000`) or a file path (e.g., `repos/anvil.md`). UUIDs are returned in search results and page summaries. New pages get a UUID auto-generated on write.
 
 ## Read Path
 
