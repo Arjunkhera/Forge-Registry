@@ -1,0 +1,18 @@
+id: horus-context
+name: Horus Context
+version: 1.0.0
+description: >
+  Interpretation layer for the Horus platform. This skill should be used when
+  the agent needs to decide which Horus subsystem to use (Anvil, Vault, or Forge),
+  route a user request across subsystem boundaries, or understand the Horus mental
+  model. Provides a default routing heuristic and non-obvious intent shortcuts.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - context
+  - routing
+  - system-awareness
+dependencies: {}
+files: []
