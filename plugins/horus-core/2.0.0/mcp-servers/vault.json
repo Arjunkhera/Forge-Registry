@@ -1,0 +1,22 @@
+{
+  "name": "vault",
+  "description": "Vault knowledge service — semantic search, context resolution, page management, write-path pipeline",
+  "required": false,
+  "tools": [
+    "knowledge_resolve_context",
+    "knowledge_search",
+    "knowledge_get_page",
+    "knowledge_get_related",
+    "knowledge_list_by_scope",
+    "knowledge_validate_page",
+    "knowledge_suggest_metadata",
+    "knowledge_check_duplicates",
+    "knowledge_get_schema",
+    "knowledge_registry_add",
+    "knowledge_write_page"
+  ],
+  "connection": {
+    "transport": "http",
+    "url_config_key": "mcp_endpoints.vault"
+  }
+}

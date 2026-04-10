@@ -1,0 +1,21 @@
+id: horus-core
+name: Horus Core
+version: 2.0.0
+description: >
+  Horus system plugin. Bundles horus-context (intent routing), three MCP
+  subsystem skills (Anvil, Vault, Forge), and capture/triage utilities.
+type: plugin
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - system-awareness
+  - global
+skills:
+  - horus-context
+  - horus-anvil
+  - horus-vault
+  - horus-forge
+  - capture
+  - triage
+agents: []
