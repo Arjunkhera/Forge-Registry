@@ -1,0 +1,18 @@
+id: horus-vault
+name: Horus Vault
+version: 2.0.0
+description: >
+  Vault MCP reference skill for Phase 1. Covers all 14 Vault tools including 6 graph
+  tools (create/delete/get edges, traverse, export, import), Phase 1 scope boundaries
+  (repo-generated docs and direct user content only), the read path (resolve → search → get),
+  degraded mode fallback for 422 errors, write path pipeline (branch + PR, not direct write),
+  page types, and schema management.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - vault
+  - system-awareness
+dependencies: {}
+files: []
