@@ -1,0 +1,17 @@
+id: skill-improver
+name: Skill Improver
+version: 1.0.0
+description: >
+  Skill iteration assistant for the Forge registry. Observes session friction,
+  generates SKILL.md improvement diffs, and handles bulk migrations when MCP
+  tools change.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - skills
+  - iteration
+  - improvement
+dependencies: {}
+files: []
