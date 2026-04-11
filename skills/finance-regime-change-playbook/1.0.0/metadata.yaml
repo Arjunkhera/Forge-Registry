@@ -1,0 +1,21 @@
+id: finance-regime-change-playbook
+name: Regime Change Playbook
+version: 1.0.0
+description: >
+  Playbook invoked when the vol regime, correlation regime, or rates regime
+  breaks. Checklist for rotating capital, which exposures to cut first,
+  which correlations to stop trusting, and re-underwriting historical vol
+  assumptions. The 2020 lesson — historical correlation is a liability
+  in a regime shift. Primary user: finance-portfolio-manager.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - skill
+  - portfolio-management
+  - regime-change
+  - playbook
+  - rotation
+  - correlation
+primary_persona: finance-portfolio-manager

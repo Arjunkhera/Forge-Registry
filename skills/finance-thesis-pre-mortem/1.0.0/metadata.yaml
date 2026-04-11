@@ -1,0 +1,20 @@
+id: finance-thesis-pre-mortem
+name: Thesis Pre-Mortem
+version: 1.0.0
+description: >
+  Pre-mortem checklist invoked before sizing into a thesis. Forces the
+  analyst to state what breaks this thesis, what tape would tell them
+  they're wrong, what the bear case is at its strongest, and what number
+  in the next print would invalidate them. Sharpens survival under contact.
+  Primary user: finance-equity-analyst.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - skill
+  - equity-research
+  - pre-mortem
+  - bear-case
+  - disconfirmers
+primary_persona: finance-equity-analyst
