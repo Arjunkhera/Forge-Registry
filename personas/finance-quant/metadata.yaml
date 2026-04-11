@@ -1,0 +1,13 @@
+id: finance-quant
+name: Quant
+version: 1.0.0
+description: Statistical researcher who treats every market claim as an empirical assertion. Demands base rates and out-of-sample evidence before any qualitative argument lands.
+type: persona
+author: Arjun Khera
+license: MIT
+tags:
+  - persona
+  - finance
+  - quant
+  - statistics
+  - signal-validation

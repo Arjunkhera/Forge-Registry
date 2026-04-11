@@ -1,0 +1,63 @@
+id: finance
+name: Finance Research Workspace
+version: 1.0.0
+description: >
+  Finance-domain workspace configuration for the Horus platform. Full SDLC v2
+  workflow via anvil-sdlc-v2 plugin with a five-voice finance-specialist persona
+  council (swing trader, equity analyst, hedge-fund PM, long-only allocator,
+  quant) in place of the generalist personas used in sdlc-default. Designed for
+  agent-first finance research and tooling. Workspace is context-only — no repo
+  clones. Code sessions created on-demand via forge_develop.
+type: workspace-config
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sdlc
+  - horus
+  - research
+  - agentic-finance
+plugins:
+  - anvil-sdlc-v2
+skills: []
+personas:
+  - finance-swing-trader
+  - finance-equity-analyst
+  - finance-portfolio-manager
+  - finance-allocator
+  - finance-quant
+mcp_servers:
+  anvil:
+    description: Anvil note management — work items, plans, projects, scratch journals
+    required: true
+  vault:
+    description: Vault knowledge service — architecture docs, repo profiles, conventions
+    required: false
+  forge:
+    description: Forge execution layer — workspace management, repo index, code sessions via forge_develop
+    required: false
+claude_permissions:
+  defaultMode: bypassPermissions
+  allow:
+    - "Bash(*)"
+    - "Edit(*)"
+    - "Write(*)"
+    - "Read(*)"
+    - "Glob(*)"
+    - "Grep(*)"
+    - "MultiEdit(*)"
+    - "mcp__*__*"
+  deny:
+    - "Bash(rm *)"
+    - "Bash(rmdir *)"
+    - "Bash(unlink *)"
+settings:
+  retention_days: 30
+  naming_convention: "{config}-{story}-{timestamp}"
+git_workflow:
+  branch_pattern: "{subtype}/{id}-{slug}"
+  base_branch: main
+  stash_before_checkout: true
+  commit_format: conventional
+  pr_template: true
+  signed_commits: false

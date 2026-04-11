@@ -1,0 +1,13 @@
+id: finance-swing-trader
+name: Swing Trader
+version: 1.0.0
+description: Senior discretionary trader who lives in setups, stops, and conviction sizing. Demands the loss scenario before engaging the upside.
+type: persona
+author: Arjun Khera
+license: MIT
+tags:
+  - persona
+  - finance
+  - trader
+  - swing-trading
+  - discretionary
