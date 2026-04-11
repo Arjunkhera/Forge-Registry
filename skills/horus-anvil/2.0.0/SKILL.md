@@ -17,6 +17,24 @@ graph layer, views/dashboards, PKM automation, and cross-system search.
 
 <!-- PATCH: overview -->
 
+## Bundled Guides — Read Before Acting (Grounding)
+
+The Horus CLI ships user-facing getting-started guides. When working with a user who is new to Horus, or when the context is unclear, **read the relevant guide before calling MCP tools**. The guides are ground-truth for user-facing behavior; if they disagree with this reference, the guide wins and this file needs an update.
+
+Relevant guides for Anvil work:
+
+- **`first-note`** — Anvil's dynamic type system, the `anvil_list_types` → `anvil_create_entity` flow, PATCH-semantics updates, append-only journal behavior, and where notes live on disk.
+- **`core-concepts`** — the Anvil / Vault / Forge split and where Anvil fits in the larger picture.
+
+To read a guide directly (works regardless of how Horus was installed):
+
+```bash
+horus guide first-note           # print the body
+horus guide first-note --path    # print the absolute path so you can Read it
+horus help <natural query>       # query-based retrieval if you don't know the slug
+horus guide --path               # print the bundled guides directory root
+```
+
 ## Tool Summary (28 tools)
 
 ### V2 Entity CRUD (preferred)
