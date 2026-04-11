@@ -1,0 +1,21 @@
+id: finance-position-fit-pre-mortem
+name: Position-Fit Pre-Mortem
+version: 1.0.0
+description: >
+  Pre-mortem checklist for a new position, invoked before the PM greenlights
+  any sizing. Forces the factor map, correlation to top 5 existing positions,
+  stress P&L, liquidity-to-exit, what has to be true for the trade to be
+  wrong, and the unwind trigger. Sharpens the "does this fit the book"
+  question into something that can't be hand-waved. Primary user:
+  finance-portfolio-manager.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - skill
+  - portfolio-management
+  - pre-mortem
+  - position-fit
+  - book-context
+primary_persona: finance-portfolio-manager

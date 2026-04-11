@@ -1,0 +1,22 @@
+id: finance-stress-runner
+name: Stress Runner
+version: 1.0.0
+description: >
+  Sub-agent that runs a book against a scenario library (2008, March 2020,
+  2013 taper, 2022 rates shock, plus custom shocks) and returns P&L per
+  position, portfolio drawdown, and liquidity-adjusted exit cost assuming
+  forced exit in 3/5/10 days at stressed ADV. Primary caller:
+  finance-portfolio-manager.
+type: agent
+rootSkill: finance-regime-change-playbook
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - portfolio-management
+  - stress-test
+  - scenario
+  - liquidity
+  - drawdown
+primary_persona: finance-portfolio-manager

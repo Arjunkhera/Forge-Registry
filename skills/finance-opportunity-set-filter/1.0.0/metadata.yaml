@@ -1,0 +1,20 @@
+id: finance-opportunity-set-filter
+name: Opportunity Set Filter
+version: 1.0.0
+description: >
+  First-filter checklist invoked the moment someone pitches a name. Walks
+  through asset-class fit, strategic weight, alpha-vs-beta distinction,
+  multi-year thesis survival under adverse cycle timing, and what would
+  have to be true in ten years. Most pitches die at this filter and should.
+  Primary user: finance-allocator.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - skill
+  - allocation
+  - opportunity-set
+  - strategic-fit
+  - first-filter
+primary_persona: finance-allocator

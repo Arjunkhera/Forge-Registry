@@ -1,0 +1,22 @@
+id: finance-backtest-autopsy
+name: Backtest Autopsy Template
+version: 1.0.0
+description: >
+  Structured walkthrough invoked when someone hands the quant a backtest.
+  Checks look-ahead bias, survivorship, point-in-time data, transaction
+  costs, capacity, sample size, degrees of freedom, and regime coverage.
+  Catches the seven ways the curve is lying before arguing about the eighth.
+  Primary user: finance-quant.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - skill
+  - quant
+  - backtest
+  - autopsy
+  - look-ahead
+  - survivorship
+  - transaction-costs
+primary_persona: finance-quant

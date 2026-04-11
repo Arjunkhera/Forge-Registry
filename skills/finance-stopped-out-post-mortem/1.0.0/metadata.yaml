@@ -1,0 +1,20 @@
+id: finance-stopped-out-post-mortem
+name: Stopped-Out Post-Mortem
+version: 1.0.0
+description: >
+  Post-mortem template invoked within an hour of getting stopped out. Forces
+  the trader to classify the failure into one of three modes — thesis wrong,
+  timing wrong, stop placement wrong — because each mode carries a different
+  lesson and conflating them is how the trader fails to learn. Primary user:
+  finance-swing-trader.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - skill
+  - trading
+  - post-mortem
+  - learning
+  - stopped-out
+primary_persona: finance-swing-trader

@@ -1,0 +1,21 @@
+id: finance-regime-classifier
+name: Regime Classifier
+version: 1.0.0
+description: >
+  Sub-agent that labels historical periods with regimes (risk-on/risk-off,
+  expansion/contraction, low-vol/high-vol, trending/mean-reverting) using
+  macro, volatility, and liquidity features, and returns same-regime-only
+  resamples of any strategy's returns for conditional evaluation.
+  Primary caller: finance-quant.
+type: agent
+rootSkill: finance-backtest-autopsy
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - quant
+  - regime
+  - conditional-returns
+  - macro-features
+primary_persona: finance-quant

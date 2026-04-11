@@ -1,0 +1,20 @@
+id: finance-pre-registration-checklist
+name: Pre-Registration Checklist
+version: 1.0.0
+description: >
+  Pre-registration discipline for quant research. Null hypothesis, universe,
+  sample window, out-of-sample hold-out, success criteria, and stopping rule
+  — written down before the data is touched. Separates research from
+  p-hacking. Invoked the moment someone says "I have an idea". Primary user:
+  finance-quant.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - skill
+  - quant
+  - pre-registration
+  - null-hypothesis
+  - research-discipline
+primary_persona: finance-quant

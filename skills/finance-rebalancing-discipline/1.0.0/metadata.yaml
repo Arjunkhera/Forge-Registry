@@ -1,0 +1,21 @@
+id: finance-rebalancing-discipline
+name: Rebalancing Discipline Framework
+version: 1.0.0
+description: >
+  Framework for rebalancing with tolerance bands, tax-aware sequencing, and
+  "rebalance into weakness vs trim into strength" logic. Pre-commitment rules
+  that stop the allocator from turning a rebalance into a tactical view.
+  Invoked whenever drift crosses a band or fresh capital comes in.
+  Primary user: finance-allocator.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - skill
+  - allocation
+  - rebalancing
+  - tolerance-bands
+  - tax-awareness
+  - pre-commitment
+primary_persona: finance-allocator

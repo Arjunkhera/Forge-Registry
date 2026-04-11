@@ -1,0 +1,20 @@
+id: finance-unit-economics-teardown
+name: Unit Economics Teardown Framework
+version: 1.0.0
+description: >
+  Framework for decomposing a business into revenue-per-unit, contribution
+  margin per unit, customer acquisition cost, payback period, and cohort
+  retention. Invoked when the company reports aggregate numbers that obscure
+  whether the underlying business is compounding. Separates good businesses
+  from good-looking P&Ls. Primary user: finance-equity-analyst.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - skill
+  - equity-research
+  - unit-economics
+  - ltv-cac
+  - cohort-analysis
+primary_persona: finance-equity-analyst
