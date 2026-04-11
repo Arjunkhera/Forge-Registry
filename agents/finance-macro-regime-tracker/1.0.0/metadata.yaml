@@ -1,0 +1,22 @@
+id: finance-macro-regime-tracker
+name: Macro Regime Tracker
+version: 1.0.0
+description: >
+  Sub-agent that monitors the handful of indicators that actually move
+  cycle position — real yields, credit spreads, yield-curve shape, ISM/PMI
+  trend, breadth of global liquidity, earnings yield vs bond yield — and
+  returns where we sit in the cycle with change-since-last-check. Tells
+  the allocator when to wake up, not when to act daily.
+  Primary caller: finance-allocator.
+type: agent
+rootSkill: finance-opportunity-set-filter
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - allocation
+  - macro
+  - cycle-position
+  - regime
+primary_persona: finance-allocator

@@ -1,0 +1,20 @@
+id: finance-multiple-testing-adjuster
+name: Multiple Testing Adjuster
+version: 1.0.0
+description: >
+  Sub-agent that applies Bonferroni, Benjamini-Hochberg, and Harvey-Liu
+  haircut adjustments to a batch of candidate signals with raw t-stats,
+  given the size of the search space that produced them. Refuses to forget
+  the denominator. Primary caller: finance-quant.
+type: agent
+rootSkill: finance-pre-registration-checklist
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - quant
+  - multiple-testing
+  - statistical-significance
+  - p-hacking
+primary_persona: finance-quant

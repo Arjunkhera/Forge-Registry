@@ -1,0 +1,22 @@
+id: finance-walk-forward-backtester
+name: Walk-Forward Backtester
+version: 1.0.0
+description: >
+  Sub-agent that runs walk-forward backtests with purged and embargoed
+  folds, returning out-of-sample equity curve, rolling Sharpe, deflated
+  Sharpe that penalises number of trials, max drawdown, turnover, and a
+  transaction-cost-adjusted result. Refuses to accept in-sample-only
+  backtests. Primary caller: finance-quant.
+type: agent
+rootSkill: finance-backtest-autopsy
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - quant
+  - backtest
+  - walk-forward
+  - deflated-sharpe
+  - out-of-sample
+primary_persona: finance-quant

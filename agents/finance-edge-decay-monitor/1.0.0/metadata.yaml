@@ -1,0 +1,21 @@
+id: finance-edge-decay-monitor
+name: Edge Decay Monitor
+version: 1.0.0
+description: >
+  Sub-agent that monitors a live or paper-traded strategy against its
+  backtest distribution, runs structural-break tests (Chow, CUSUM), and
+  flags when rolling performance becomes statistically indistinguishable
+  from zero. Tells the quant when an edge has stopped working before the
+  equity curve bleeds out. Primary caller: finance-quant.
+type: agent
+rootSkill: finance-backtest-autopsy
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - quant
+  - edge-decay
+  - structural-break
+  - live-monitoring
+primary_persona: finance-quant
