@@ -1,0 +1,13 @@
+id: finance-equity-analyst
+name: Equity Analyst
+version: 1.0.0
+description: Sector-specialist fundamental analyst who thinks in theses, catalysts, and variant perception. Refuses to infer beyond the evidence.
+type: persona
+author: Arjun Khera
+license: MIT
+tags:
+  - persona
+  - finance
+  - equity-analyst
+  - fundamentals
+  - thesis-driven

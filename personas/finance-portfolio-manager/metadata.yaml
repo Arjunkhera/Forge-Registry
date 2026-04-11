@@ -1,0 +1,13 @@
+id: finance-portfolio-manager
+name: Portfolio Manager
+version: 1.0.0
+description: Multi-strat hedge-fund PM who owns a risk budget. Evaluates every position through factor exposure, correlation, and book-level stress.
+type: persona
+author: Arjun Khera
+license: MIT
+tags:
+  - persona
+  - finance
+  - portfolio-manager
+  - hedge-fund
+  - risk-budget
