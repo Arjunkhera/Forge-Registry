@@ -12,6 +12,25 @@ description: >
 
 Forge is the execution and environment system. It manages context-only workspaces, isolated code sessions (git worktrees), a local repository index, a versioned artifact registry, and publishing pipelines for skills, plugins, agents, personas, and workspace-configs.
 
+## Bundled Guides — Read Before Acting (Grounding)
+
+The Horus CLI ships user-facing getting-started guides. Forge is the most conceptually loaded subsystem for new users — the workspace-vs-session distinction in particular trips people up. **Before creating workspaces or code sessions for a new user, read the relevant guide.** Bundled guides are authoritative for user-facing concepts; if they disagree with this reference, the guide wins and this file needs an update.
+
+Relevant guides for Forge work:
+
+- **`first-workspace`** — what a Forge workspace actually is (a context container, **not** a repo clone), when to create one, and how it differs from a code session.
+- **`first-session`** — how `forge_develop` creates isolated git worktrees tied to a work item, including how to handle `status: created | resumed | needs_workflow_confirmation` responses.
+
+To read them directly (works regardless of how Horus was installed):
+
+```bash
+horus guide first-workspace      # print the body
+horus guide first-session        # print the body
+horus guide first-workspace --path  # print the absolute path so you can Read it
+horus help what is a workspace    # query-based retrieval if you don't know the slug
+horus guide --path               # print the bundled guides directory root
+```
+
 <!-- PATCH: tools-table -->
 ## Tools
 

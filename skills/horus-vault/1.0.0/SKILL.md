@@ -11,6 +11,23 @@ description: >
 
 Vault is the knowledge base. It stores long-lived, structured documentation about codebases, conventions, procedures, and decisions. It has a two-tier architecture: a Python REST API (FastAPI) for search and knowledge logic, and a thin TypeScript MCP adapter that translates MCP calls to HTTP requests.
 
+## Bundled Guides — Read Before Acting (Grounding)
+
+The Horus CLI ships user-facing getting-started guides. When working with a user who is new to Horus, or when the context is unclear, **read the relevant guide before calling MCP tools**. Bundled guides are authoritative for user-facing concepts; if they disagree with this reference, the guide wins and this file needs an update.
+
+Relevant guide for Vault work:
+
+- **`core-concepts`** — the three-systems mental model (Anvil / Vault / Forge), where Vault fits, how `vault-router` fans out reads across multiple vault instances, and how Vault relates to Neo4j and Typesense.
+
+To read it directly (works regardless of how Horus was installed):
+
+```bash
+horus guide core-concepts        # print the body
+horus guide core-concepts --path # print the absolute path so you can Read it
+horus help <natural query>       # query-based retrieval if you don't know the slug
+horus guide --path               # print the bundled guides directory root
+```
+
 ## Multi-Vault Architecture
 
 Horus supports multiple vault instances (e.g., `personal` and `work`). All tools route through `vault-router`, which sits between the MCP and the vault instances:
