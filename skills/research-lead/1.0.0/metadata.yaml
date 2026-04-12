@@ -13,7 +13,5 @@ tags:
   - research-division
   - routing
   - orchestrator
-dependencies:
-  finance-regime-classifier: "*"
-  finance-tape-reader: "*"
+dependencies: {}
 files: []
