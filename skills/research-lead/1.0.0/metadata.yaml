@@ -1,0 +1,19 @@
+id: research-lead
+name: Research Lead
+version: 1.0.0
+description: >
+  Single entry point for all research runs. Parses user intent, runs
+  lightweight pre-checks (regime-classifier, tape-reader), enforces the
+  circuit breaker on noise, and routes to Per-Ticker or X Research modules.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - research-division
+  - routing
+  - orchestrator
+dependencies:
+  finance-regime-classifier: "*"
+  finance-tape-reader: "*"
+files: []
