@@ -1,0 +1,17 @@
+id: finance-map-keeper
+name: Map Keeper
+version: 1.0.0
+description: >
+  Knowledge hierarchy maintenance agent. Reads research briefs, extracts
+  market entities, creates missing Anvil entities, wires graph relationships,
+  and updates the Keystone Map dashboard.
+type: agent
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - research-division
+  - map-keeper
+  - knowledge-graph
+dependencies: {}
+files: []
