@@ -1,0 +1,19 @@
+id: per-ticker-research
+name: Per-Ticker Research
+version: 1.0.0
+description: >
+  Primary research engine for individual tickers. Memory-checks prior briefs
+  with regime gating, runs a parallel three-persona council (equity-analyst,
+  swing-trader, quant) where each persona picks its own sub-agents, synthesises
+  an aggregate verdict, writes an immutable research-brief to Anvil, and
+  fire-and-forget triggers the Map Keeper to update the knowledge hierarchy.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - research-division
+  - per-ticker
+  - council
+dependencies: {}
+files: []
