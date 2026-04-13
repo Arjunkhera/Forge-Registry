@@ -1,0 +1,20 @@
+id: finance-tape-reader
+name: Tape Reader
+version: 1.0.1
+description: >
+  Sub-agent that watches intraday price, volume, and options-flow for a
+  single ticker and returns a structured phase read — trend/range/transition,
+  key levels, relative volume, and whether the tape is confirming or fighting
+  the daily setup. Primary caller: finance-swing-trader.
+type: agent
+rootSkill: finance-phase-of-market
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - trading
+  - swing-trading
+  - tape
+  - price-action
+primary_persona: finance-swing-trader

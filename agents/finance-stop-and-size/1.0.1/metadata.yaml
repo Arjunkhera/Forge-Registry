@@ -1,0 +1,20 @@
+id: finance-stop-and-size
+name: Stop and Size Calculator
+version: 1.0.1
+description: >
+  Sub-agent that takes a proposed entry, stop, conviction tier, and account
+  risk budget, and returns share size, dollar risk, portfolio heat after
+  fill, and a factor-stacking flag if the new position concentrates risk
+  already on the book. Primary caller: finance-swing-trader.
+type: agent
+rootSkill: finance-pre-trade-checklist
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - trading
+  - sizing
+  - risk
+  - portfolio-heat
+primary_persona: finance-swing-trader

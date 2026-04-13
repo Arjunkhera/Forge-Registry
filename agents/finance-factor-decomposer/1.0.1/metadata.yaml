@@ -1,0 +1,20 @@
+id: finance-factor-decomposer
+name: Factor Decomposer
+version: 1.0.1
+description: >
+  Sub-agent that takes a portfolio book and returns factor-mapped exposures
+  (equity beta, rates DV01, credit spread DV01, USD, oil, momentum, value,
+  size, quality) plus marginal contribution to risk per position and the
+  top three hidden correlations. Primary caller: finance-portfolio-manager.
+type: agent
+rootSkill: finance-position-fit-pre-mortem
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - portfolio-management
+  - factor-model
+  - risk
+  - correlation
+primary_persona: finance-portfolio-manager

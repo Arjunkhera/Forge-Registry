@@ -1,0 +1,22 @@
+id: finance-filings-diff
+name: Filings Diff
+version: 1.0.1
+description: >
+  Sub-agent that diffs SEC filings (10-K, 10-Q) between two periods and
+  flags material changes in risk factors, MD&A language, segment footnotes,
+  and critical accounting estimates. Materiality scored, not character-count
+  scored. Primary caller: finance-equity-analyst.
+type: agent
+rootSkill: finance-thesis-catalyst-variant
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - fundamental-analysis
+  - filings
+  - sec
+  - 10-k
+  - 10-q
+  - narrative-drift
+primary_persona: finance-equity-analyst
