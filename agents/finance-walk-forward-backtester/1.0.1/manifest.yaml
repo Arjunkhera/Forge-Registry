@@ -1,0 +1,6 @@
+generated_at: "2026-04-13T10:55:00.000+00:00"
+files:
+  - path: "AGENT.md"
+    sha256: "2aa45b562940092e40378d46e6fc44a6c79caad747c3d8bd20c687daef393edb"
+  - path: "metadata.yaml"
+    sha256: "6ce0e0d98f0af61de38f71cfca854a27564d0d419636b3088388a62c856c2ae4"

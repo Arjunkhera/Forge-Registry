@@ -1,0 +1,21 @@
+id: finance-drift-monitor
+name: Strategic Drift Monitor
+version: 1.0.1
+description: >
+  Sub-agent that compares current portfolio weights against policy targets
+  by asset class and sub-sleeve, attributes drift to flows vs price, and
+  flags which sleeves have drifted beyond tolerance bands and for how long.
+  Strategic drift is the allocator's single biggest operational risk.
+  Primary caller: finance-allocator.
+type: agent
+rootSkill: finance-rebalancing-discipline
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - allocation
+  - rebalancing
+  - drift
+  - policy-weights
+primary_persona: finance-allocator

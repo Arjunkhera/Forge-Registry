@@ -1,0 +1,21 @@
+id: finance-risk-budget-reconciler
+name: Risk Budget Reconciler
+version: 1.0.1
+description: >
+  Sub-agent that takes a proposed trade against the current book and risk
+  budget targets and returns the correlation-adjusted marginal vol, the bps
+  of budget remaining after the trade, and what the trade crowds out.
+  Stops trades that look small standalone but are 40% of remaining budget.
+  Primary caller: finance-portfolio-manager.
+type: agent
+rootSkill: finance-position-fit-pre-mortem
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - sub-agent
+  - portfolio-management
+  - risk-budget
+  - marginal-vol
+  - position-sizing
+primary_persona: finance-portfolio-manager
