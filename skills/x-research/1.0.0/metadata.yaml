@@ -1,0 +1,21 @@
+id: x-research
+name: X Research
+version: 1.0.0
+description: >
+  Research module for X (Twitter) content. Accepts a tweet URL, account
+  handle, or pre-fetched text (Phase 1: user-paste fallback). Runs a
+  content assessment quality gate, then a parallel two-persona council
+  (swing-trader + equity-analyst) where each persona picks its own
+  sub-agents. Synthesises an aggregate verdict and the set of
+  tickers/themes flagged, writes an immutable research-brief to Anvil,
+  and fire-and-forget triggers the Map Keeper.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - finance
+  - research-division
+  - x-research
+  - council
+dependencies: {}
+files: []
