@@ -1,0 +1,18 @@
+id: horus-cli
+name: Horus CLI
+version: 1.1.0
+description: >
+  Horus CLI reference skill. Covers all 10 CLI commands (setup, up, down, status,
+  config, connect, update, doctor, backup, repo), their flags, common workflows,
+  and Podman-specific notes. Includes horus repo rindex for on-demand repo rescanning.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - horus
+  - cli
+  - docker
+  - podman
+  - system-awareness
+dependencies: {}
+files: []
