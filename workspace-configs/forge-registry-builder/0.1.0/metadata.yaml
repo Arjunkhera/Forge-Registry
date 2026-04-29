@@ -1,0 +1,41 @@
+id: forge-registry-builder
+name: Forge Registry Builder
+version: 0.1.0
+description: >
+  Workspace for building and publishing Forge artifacts (skills, plugins, agents,
+  personas, workspace-configs). Installs the full forge-create toolset for guided
+  artifact creation.
+type: workspace-config
+author: Arjun Khera
+license: MIT
+tags:
+  - forge
+  - horus
+  - artifact-creation
+  - registry
+  - builder
+mcpServers:
+  - anvil
+  - vault
+  - forge
+skills:
+  - skill:forge-create@0.1.0
+  - skill:forge-create-intake@0.1.0
+  - skill:forge-create-decompose@0.1.0
+  - skill:forge-create-skill@0.1.0
+  - skill:forge-create-plugin@0.1.0
+  - skill:forge-create-agent@0.1.0
+  - skill:forge-create-persona@0.1.0
+  - skill:forge-create-workspace-config@0.1.0
+plugins: []
+agents: []
+dependencies:
+  skill:forge-create: "0.1.0"
+  skill:forge-create-intake: "0.1.0"
+  skill:forge-create-decompose: "0.1.0"
+  skill:forge-create-skill: "0.1.0"
+  skill:forge-create-plugin: "0.1.0"
+  skill:forge-create-agent: "0.1.0"
+  skill:forge-create-persona: "0.1.0"
+  skill:forge-create-workspace-config: "0.1.0"
+files: []
