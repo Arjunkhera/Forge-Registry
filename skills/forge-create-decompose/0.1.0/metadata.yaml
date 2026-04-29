@@ -1,0 +1,17 @@
+id: forge-create-decompose
+name: Forge Create Decompose
+version: 0.1.0
+description: >
+  Internal expert for forge-create. Maps user stories to Forge artifact recommendations
+  using artifact type definitions and registry search. Produces structured artifact plans.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - forge
+  - horus
+  - artifact-creation
+  - decomposition
+  - internal
+dependencies: {}
+files: []

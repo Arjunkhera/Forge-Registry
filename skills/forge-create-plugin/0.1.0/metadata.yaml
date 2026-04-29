@@ -1,0 +1,17 @@
+id: forge-create-plugin
+name: Forge Create Plugin
+version: 0.1.0
+description: >
+  Internal expert for forge-create. Creates Forge plugin artifacts that bundle
+  related skills and agents into cohesive packages.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - forge
+  - horus
+  - artifact-creation
+  - plugin-creator
+  - internal
+dependencies: {}
+files: []

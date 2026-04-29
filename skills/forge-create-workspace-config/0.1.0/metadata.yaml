@@ -1,0 +1,17 @@
+id: forge-create-workspace-config
+name: Forge Create Workspace Config
+version: 0.1.0
+description: >
+  Internal expert for forge-create. Creates Forge workspace-config artifacts with
+  MCP server wiring, skill/plugin references, and inheritance support.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - forge
+  - horus
+  - artifact-creation
+  - workspace-config-creator
+  - internal
+dependencies: {}
+files: []

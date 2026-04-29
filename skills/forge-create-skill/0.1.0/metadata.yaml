@@ -1,0 +1,17 @@
+id: forge-create-skill
+name: Forge Create Skill
+version: 0.1.0
+description: >
+  Internal expert for forge-create. Creates Forge skill artifacts with best practices,
+  proper structure, and Anthropic skill creator patterns.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - forge
+  - horus
+  - artifact-creation
+  - skill-creator
+  - internal
+dependencies: {}
+files: []

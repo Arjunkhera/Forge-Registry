@@ -1,0 +1,20 @@
+id: forge-create
+name: Forge Create
+version: 0.1.0
+description: >
+  Guided artifact creation orchestrator. Single entry point for creating skills,
+  plugins, agents, personas, and workspace-configs through interactive workflows.
+  Delegates to specialized creator experts internally.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - forge
+  - horus
+  - artifact-creation
+  - orchestrator
+  - skill-creator
+  - plugin-creator
+  - agent-creator
+dependencies: {}
+files: []

@@ -1,0 +1,17 @@
+id: forge-create-intake
+name: Forge Create Intake
+version: 0.1.0
+description: >
+  Internal expert for forge-create. Captures user intent via hybrid approach
+  (free-form + targeted clarifications) and produces structured user stories.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - forge
+  - horus
+  - artifact-creation
+  - intake
+  - internal
+dependencies: {}
+files: []
