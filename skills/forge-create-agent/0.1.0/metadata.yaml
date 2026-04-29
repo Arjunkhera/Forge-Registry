@@ -1,0 +1,17 @@
+id: forge-create-agent
+name: Forge Create Agent
+version: 0.1.0
+description: >
+  Internal expert for forge-create. Creates Forge agent artifacts with root skill,
+  dependencies, and orchestration workflows.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - forge
+  - horus
+  - artifact-creation
+  - agent-creator
+  - internal
+dependencies: {}
+files: []

@@ -1,0 +1,17 @@
+id: forge-create-persona
+name: Forge Create Persona
+version: 0.1.0
+description: >
+  Internal expert for forge-create. Creates Forge persona artifacts with character
+  profiles, tone, expertise, and behavioral traits for Agent Team mode.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - forge
+  - horus
+  - artifact-creation
+  - persona-creator
+  - internal
+dependencies: {}
+files: []
