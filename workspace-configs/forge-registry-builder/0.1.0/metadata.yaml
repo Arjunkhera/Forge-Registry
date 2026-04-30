@@ -14,28 +14,49 @@ tags:
   - artifact-creation
   - registry
   - builder
-mcpServers:
-  - anvil
-  - vault
-  - forge
 skills:
-  - skill:forge-create@0.1.0
-  - skill:forge-create-intake@0.1.0
-  - skill:forge-create-decompose@0.1.0
-  - skill:forge-create-skill@0.1.0
-  - skill:forge-create-plugin@0.1.0
-  - skill:forge-create-agent@0.1.0
-  - skill:forge-create-persona@0.1.0
-  - skill:forge-create-workspace-config@0.1.0
+  - forge-create@0.1.0
+  - forge-create-intake@0.1.0
+  - forge-create-decompose@0.1.0
+  - forge-create-skill@0.1.0
+  - forge-create-plugin@0.1.0
+  - forge-create-agent@0.1.0
+  - forge-create-persona@0.1.0
+  - forge-create-workspace-config@0.1.0
 plugins: []
-agents: []
-dependencies:
-  skill:forge-create: "0.1.0"
-  skill:forge-create-intake: "0.1.0"
-  skill:forge-create-decompose: "0.1.0"
-  skill:forge-create-skill: "0.1.0"
-  skill:forge-create-plugin: "0.1.0"
-  skill:forge-create-agent: "0.1.0"
-  skill:forge-create-persona: "0.1.0"
-  skill:forge-create-workspace-config: "0.1.0"
-files: []
+personas: []
+mcp_servers:
+  anvil:
+    description: Anvil note management — work items, plans, journals
+    required: true
+  vault:
+    description: Vault knowledge service — architecture docs, repo profiles, conventions
+    required: false
+  forge:
+    description: Forge execution layer — registry, sessions, publishing
+    required: true
+claude_permissions:
+  defaultMode: bypassPermissions
+  allow:
+    - "Bash(*)"
+    - "Edit(*)"
+    - "Write(*)"
+    - "Read(*)"
+    - "Glob(*)"
+    - "Grep(*)"
+    - "MultiEdit(*)"
+    - "mcp__*__*"
+  deny:
+    - "Bash(rm *)"
+    - "Bash(rmdir *)"
+    - "Bash(unlink *)"
+settings:
+  retention_days: 30
+  naming_convention: "{config}-{story}-{timestamp}"
+git_workflow:
+  branch_pattern: "{subtype}/{id}-{slug}"
+  base_branch: main
+  stash_before_checkout: true
+  commit_format: conventional
+  pr_template: true
+  signed_commits: false
