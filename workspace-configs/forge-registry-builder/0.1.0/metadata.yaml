@@ -15,14 +15,14 @@ tags:
   - registry
   - builder
 skills:
-  - forge-create@0.1.0
-  - forge-create-intake@0.1.0
-  - forge-create-decompose@0.1.0
-  - forge-create-skill@0.1.0
-  - forge-create-plugin@0.1.0
-  - forge-create-agent@0.1.0
-  - forge-create-persona@0.1.0
-  - forge-create-workspace-config@0.1.0
+  - forge-create
+  - forge-create-intake
+  - forge-create-decompose
+  - forge-create-skill
+  - forge-create-plugin
+  - forge-create-agent
+  - forge-create-persona
+  - forge-create-workspace-config
 plugins: []
 personas: []
 mcp_servers:
