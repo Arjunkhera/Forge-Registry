@@ -1,0 +1,18 @@
+id: index-claude-code-docs
+name: Index Claude Code Docs
+version: 0.1.0
+description: >
+  Indexes Claude Code documentation from code.claude.com into the Vault knowledge base.
+  Fetches machine-readable .md pages, synthesizes them into structured Vault pages, and
+  runs the full write pipeline. Supports diff-only (default) and --full re-index modes.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - vault
+  - claude-code
+  - documentation
+  - indexing
+  - knowledge-base
+dependencies: {}
+files: []
