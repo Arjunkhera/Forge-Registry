@@ -1,0 +1,19 @@
+id: sdlc-bug
+name: SDLC Bug
+version: 0.1.0
+description: >
+  Reports and tracks bugs in Anvil using the "bug" type, moving them through a
+  structured lifecycle: open → investigating → fix-ready → in-progress → fixed →
+  verified (or wont-fix). Each bug has 9 independently updatable sections.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - bug
+  - debugging
+  - anvil
+  - project-management
+dependencies: {}
+files: []
