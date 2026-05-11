@@ -1,0 +1,19 @@
+id: sdlc-feature-doc
+name: SDLC Feature Doc
+version: 0.1.0
+description: >
+  Creates and updates a structured design document in Anvil for a software feature,
+  tracking it through a 10-stage SDLC lifecycle: Idea → Discovery → Requirements →
+  Design → Planning → Implementation → Integration → Review/QA → Ship → Retro.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - design-doc
+  - feature
+  - anvil
+  - project-management
+dependencies: {}
+files: []
