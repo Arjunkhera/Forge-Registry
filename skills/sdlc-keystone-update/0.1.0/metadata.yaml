@@ -1,0 +1,18 @@
+id: sdlc-keystone-update
+name: SDLC Keystone Update
+version: 0.1.0
+description: >
+  Rewrites a Horus keystone project page in Anvil to the standard template.
+  Re-sorts the work item tracker (in-progress first, done last, by priority)
+  and ensures all required sections are present. Saves back via anvil_update_entity.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - keystone
+  - anvil
+  - project-management
+dependencies: {}
+files: []
