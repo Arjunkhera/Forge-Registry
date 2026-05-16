@@ -1,0 +1,21 @@
+id: sdlc-tester
+name: SDLC Tester
+version: 2.0.0
+description: >
+  Testing orchestration skill. Generates the test spec from acceptance criteria
+  before implementation (RED), spawns the sdlc-testenv executor for red/green
+  runs, runs the promotion gate (freeze + commit-bind proof-of-work + read-only
+  Anvil test-spec/test-run mirror + story.proof_of_work edge), and enforces the
+  review-handoff data contract. Repo-agnostic.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - tester
+  - testing
+  - tdd
+  - proof-of-work
+dependencies: {}
+files: []
