@@ -1,0 +1,16 @@
+id: sdlc-developer
+name: SDLC Developer
+version: 1.4.0
+description: Implementation engine. Plan, approve, and implement work items with a
+  test-first + green-gate sdlc-tester bracket, Vault context, Forge workspace
+  bootstrapping, and deterministic git operations via bundled scripts.
+type: skill
+author: Arjun Khera
+license: MIT
+tags:
+  - sdlc
+  - horus
+  - developer
+  - implementation
+dependencies: {}
+files: []
