@@ -4,6 +4,7 @@ version: 1.0.0
 description: "Comprehensive testing pipeline: work-item testing, project-wide
   regression, refactor verification, and product-level testing."
 type: agent
+rootSkill: sdlc-tester
 author: Arjun Khera
 license: MIT
 tags:

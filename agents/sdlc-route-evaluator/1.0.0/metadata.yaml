@@ -4,6 +4,7 @@ version: 1.0.0
 description: Lightweight Haiku-powered routing evaluator. Reads conversation-state
   and returns stay or suggest:skill-name. Fired by orchestrator on pulse-check phrases.
 type: agent
+rootSkill: sdlc-orchestrator
 model: claude-haiku-4-5-20251001
 author: Arjun Khera
 license: MIT

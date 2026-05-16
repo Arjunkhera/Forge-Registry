@@ -5,6 +5,7 @@ description: "Full work item lifecycle: gather context, workspace, plan,
   implement, test, review. The primary subagent for end-to-end story
   implementation."
 type: agent
+rootSkill: sdlc-developer
 author: Arjun Khera
 license: MIT
 tags:

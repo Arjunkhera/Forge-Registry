@@ -4,6 +4,7 @@ version: 1.0.0
 description: "Release lifecycle: identify completed work, generate changelog,
   bump version, tag, push, and trigger post-release documentation sweep."
 type: agent
+rootSkill: sdlc-orchestrator
 author: Arjun Khera
 license: MIT
 tags:

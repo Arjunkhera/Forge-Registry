@@ -4,6 +4,7 @@ version: 1.0.0
 description: Post-implementation documentation sync. Identifies doc gaps, fills
   them in project docs and Vault knowledge pages.
 type: agent
+rootSkill: sdlc-docs
 author: Arjun Khera
 license: MIT
 tags:

@@ -4,6 +4,7 @@ version: 1.0.0
 description: "Feature decomposition: gather context, assess scope, decompose
   into typed work items with dependencies and ceremony levels."
 type: agent
+rootSkill: sdlc-planner
 author: Arjun Khera
 license: MIT
 tags:
