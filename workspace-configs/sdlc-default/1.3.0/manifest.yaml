@@ -1,0 +1,6 @@
+generated_at: "2026-05-17T08:03:41.000000+00:00"
+files:
+  - path: "WORKSPACE.md"
+    sha256: "08b8ccbf83120f20c1c4247ee64d1634d1438e304ffd7dfc7cb85f591cb7b7bc"
+  - path: "metadata.yaml"
+    sha256: "ed6400b9aeaed8f6d02ed8703b6485f2704197933cc0995655f704f7aae014d3"
